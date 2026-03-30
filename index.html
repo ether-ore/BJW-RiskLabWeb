@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BJW-RiskLab — Blackjack Risk Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07100a;--bg-s:#0d1a10;--bg-r:#131f15;--bg-i:#0a1b0d;
+  --brd:#1c3020;--brd-h:#27452b;
+  --acc:#00e58a;--acc-d:#00a863;--acc-g:rgba(0,229,138,.12);
+  --tx:#c8e8d0;--tx-d:#547a5e;--tx-m:#2b4530;--tx-l:#7aaa84;
+  --safe:#00e58a;--caut:#d4c038;--warn:#e09020;--dang:#e04848;
+  --fmono:'JetBrains Mono','Courier New',monospace;
+  --fui:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --r:4px;--rl:8px;--tr:.15s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{background:var(--bg);color:var(--tx);font-family:var(--fui);font-size:13px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column;background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,138,.013) 2px,rgba(0,229,138,.013) 4px)}
+.app-header{display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--brd);background:var(--bg-s);position:sticky;top:0;z-index:100;overflow:hidden}
+.app-logo{font-family:var(--fmono);font-weight:600;font-size:15px;color:var(--acc);letter-spacing:.08em;text-transform:uppercase}
+.app-logo span{color:var(--tx-d);font-weight:300}
+.hdr-meta{margin-left:auto;font-size:11px;color:var(--tx-m);font-family:var(--fmono)}
+.hdr-meta a{color:var(--tx-d);text-decoration:none;transition:color .15s}
+.hdr-meta a:hover{color:var(--acc)}
+.hdr-meta a{color:var(--tx-d);text-decoration:none}
+.hdr-meta a:hover{color:var(--acc)}
+.app-header::after{content:'';position:absolute;bottom:0;left:0;height:1px;width:40%;background:linear-gradient(to right,var(--acc),transparent);animation:scan 6s linear infinite}
+@keyframes scan{0%{transform:translateX(-100%);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateX(350%);opacity:0}}
+.shared-bar{display:flex;gap:20px;align-items:flex-end;padding:12px 24px;background:var(--bg-s);border-bottom:1px solid var(--brd);flex-wrap:wrap}
+.shared-bar .fg{display:flex;flex-direction:column;gap:4px;min-width:130px}
+.tab-bar{display:flex;padding:0 24px;background:var(--bg-s);border-bottom:1px solid var(--brd);gap:2px;overflow-x:auto}
+.tab-btn{font-family:var(--fui);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--tx-d);background:none;border:none;border-bottom:2px solid transparent;padding:10px 18px;cursor:pointer;transition:color var(--tr),border-color var(--tr);white-space:nowrap}
+.tab-btn:hover{color:var(--tx)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-content{flex:1}
+.tab-pane{display:none;padding:24px;animation:fi .2s ease}
+.tab-pane.active{display:block}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.cl{display:grid;grid-template-columns:320px 1fr;gap:20px;max-width:1100px}
+@media(max-width:800px){.cl{grid-template-columns:1fr}}
+.card{background:var(--bg-s);border:1px solid var(--brd);border-radius:var(--rl);padding:18px 20px}
+.card+.card{margin-top:14px}
+.ct{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--tx-d);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--brd)}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.fg:last-child{margin-bottom:0}
+label{font-size:11px;color:var(--tx-l);letter-spacing:.03em}
+input[type=number],input[type=text],select{background:var(--bg-i);border:1px solid var(--brd);border-radius:var(--r);color:var(--tx);font-family:var(--fmono);font-size:13px;padding:7px 10px;width:100%;transition:border-color var(--tr),box-shadow var(--tr);outline:none;-moz-appearance:textfield}
+input[type=number]:focus,input[type=text]:focus,select:focus{border-color:var(--acc-d);box-shadow:0 0 0 2px var(--acc-g)}
+input[type=number]:hover,select:hover{border-color:var(--brd-h)}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23547a5e'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.og{display:flex;flex-direction:column;gap:8px}
+.or{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 10px;background:var(--bg-r);border-radius:var(--r);border:1px solid var(--brd);cursor:default}
+.or:hover{border-color:var(--brd-h)}
+.ol{font-size:11px;color:var(--tx-l);flex-shrink:0}
+.ov{font-family:var(--fmono);font-size:14px;font-weight:600;color:var(--tx);text-align:right}
+.vs{color:var(--safe)}.vc{color:var(--caut)}.vw{color:var(--warn)}.vd{color:var(--dang)}
+.sd{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-m);margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.sd::after{content:'';flex:1;height:1px;background:var(--brd)}
+.disc{background:rgba(28,48,32,.4);border:1px solid var(--brd);border-radius:var(--r);padding:8px 14px;font-size:11px;color:var(--tx-m);margin-bottom:16px;line-height:1.5}
+.lc{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end}
+.lc .fg{min-width:130px;margin-bottom:0}
+.ltw{overflow-x:auto;border:1px solid var(--brd);border-radius:var(--rl)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{background:var(--bg-r)}
+th{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx-d);padding:9px 12px;text-align:left;border-bottom:1px solid var(--brd);white-space:nowrap;user-select:none}
+th[data-sort]{cursor:pointer}
+th[data-sort]:hover{color:var(--acc)}
+td{padding:8px 12px;border-bottom:1px solid rgba(28,48,32,.6);color:var(--tx);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tbody tr{cursor:pointer;transition:background var(--tr)}
+tbody tr:hover{background:var(--bg-r)}
+tbody tr.sel{background:rgba(0,229,138,.07);outline:1px solid var(--acc-d);outline-offset:-1px}
+.nc{font-family:var(--fmono);text-align:right}
+.le{text-align:center;color:var(--tx-m);padding:32px;font-style:italic}
+.ln{margin-top:10px;font-size:11px;font-family:var(--fmono);color:var(--tx-m);min-height:18px}
+.ln.vis{color:var(--acc-d)}
+.rtw{overflow-x:auto;border:1px solid var(--brd);border-radius:var(--rl);margin-top:14px}
+.pn{font-size:11px;font-family:var(--fmono);color:var(--tx-m);margin-top:10px;min-height:18px}
+.pn.vis{color:var(--acc-d)}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:700px}
+.sn{margin-top:24px;font-size:11px;color:var(--tx-m);line-height:1.6;max-width:600px;border-top:1px solid var(--brd);padding-top:14px}
+.sn code{color:var(--tx-d);font-family:var(--fmono)}
+.status-bar{background:var(--bg-s);border-top:1px solid var(--brd);padding:5px 24px;font-size:11px;font-family:var(--fmono);color:var(--tx-d);min-height:26px;letter-spacing:.02em}
+.chip{display:inline-block;font-family:var(--fmono);font-size:10px;padding:1px 6px;border-radius:3px;background:var(--bg-r);border:1px solid var(--brd-h);color:var(--tx-d);margin-left:4px;vertical-align:middle}
+.wtg{transition:opacity var(--tr)}
+.wtg.hid{opacity:.3;pointer-events:none}
+.cbr{display:flex;flex-direction:row;align-items:center;gap:10px;margin-bottom:12px}
+.cbr input{width:auto}
+.cbr label{color:var(--tx)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--brd-h);border-radius:3px}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-logo">BJW&#x2011;RiskLab<span> / stillward labs</span></div>
+  <div class="hdr-meta">Formulas: <a href="https://www.blackjackattack.com" target="_blank">BJA3</a> Ch.10 &nbsp;·&nbsp; <a href="help.html">Reference Manual</a> &nbsp;·&nbsp; v0.1.0-dev</div>
+</header>
+
+<div class="shared-bar">
+  <div class="fg"><label for="mu100">μ / 100 hands (units)</label><input type="number" id="mu100" value="0.80" step="0.01" min="-5" max="10"></div>
+  <div class="fg"><label for="sigma100">σ / 100 hands (units)</label><input type="number" id="sigma100" value="14.0" step="0.1" min="0.01" max="40"></div>
+  <div class="fg"><label for="unit_size">Unit size ($)</label><input type="number" id="unit_size" value="25" step="5" min="1" max="100000"></div>
+  <div class="fg"><label for="hph">Hands per hour</label><input type="number" id="hph" value="80" step="5" min="10" max="300"></div>
+</div>
+
+<nav class="tab-bar">
+  <button class="tab-btn" data-tab="tab1">① RoR &amp; Bankroll</button>
+  <button class="tab-btn" data-tab="tab2">② Session / Trip</button>
+  <button class="tab-btn" data-tab="tab3">③ Game Library</button>
+  <button class="tab-btn" data-tab="tab4">④ Bet Optimizer</button>
+  <button class="tab-btn" data-tab="tab5">⑤ Settings</button>
+</nav>
+
+<main class="tab-content">
+
+<!-- TAB 1 -->
+
+<section class="tab-pane" id="tab1">
+  <div class="disc">All formulas: BJA3 Ch.10. Values in units unless $ shown. Shared inputs (μ, σ, unit$, HPH) at top apply to all tabs.</div>
+  <div class="cl">
+    <div>
+      <div class="card">
+        <div class="ct">Inputs</div>
+        <div class="fg"><label for="t1_bankroll">Bankroll (units)</label><input type="number" id="t1_bankroll" value="300" step="10" min="1"></div>
+        <div class="fg"><label for="t1_targetRor">Target RoR (e.g. 0.01 = 1%)</label><input type="number" id="t1_targetRor" value="0.01" step="0.005" min="0.001" max="0.99"></div>
+        <p style="font-size:11px;color:var(--tx-m);margin-top:10px;line-height:1.6">μ and σ are set in the shared bar above, or auto-populated from the Game Library or Optimizer tabs.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="ct">Risk of Ruin &nbsp;<span style="font-weight:300;text-transform:none">BJA3 p.112 · RoR = exp(−2μB/σ²)</span></div>
+        <div class="og">
+          <div class="or"><span class="ol">RoR at bankroll B</span><span class="ov" id="ror_out">—</span></div>
+          <div class="or"><span class="ol">Required bankroll for target RoR (units)</span><span class="ov" id="req_bank_out">—</span></div>
+          <div class="or"><span class="ol">Required bankroll ($)</span><span class="ov" id="req_bank_dollar">—</span></div>
+          <div class="or"><span class="ol">Current bankroll ($)</span><span class="ov" id="bankroll_dollar">—</span></div>
+        </div>
+        <div class="sd">N₀ &nbsp; BJA3 Ch.10 · (σ/μ)² × 100</div>
+        <div class="og">
+          <div class="or"><span class="ol">N₀ — hands to overcome variance</span><span class="ov" id="n0_hands_out">—</span></div>
+          <div class="or"><span class="ol">N₀ in hours at HPH</span><span class="ov" id="n0_hours_out">—</span></div>
+        </div>
+        <div class="sd">Dollar Rates — per hour</div>
+        <div class="og">
+          <div class="or"><span class="ol">Hourly EV ($)</span><span class="ov" id="ev_hr_out">—</span></div>
+          <div class="or"><span class="ol">Hourly SD ($)</span><span class="ov" id="sd_hr_out">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2 -->
+
+<section class="tab-pane" id="tab2">
+  <div class="disc">Trip RoR: BJA3 p.132 (slight overestimate vs simulation). Goal probs: BJA3 p.136–139.</div>
+  <div class="cl">
+    <div>
+      <div class="card">
+        <div class="ct">Session Parameters</div>
+        <div class="fg"><label for="t2_hours">Hours of play</label><input type="number" id="t2_hours" value="8" step="1" min="0.5" max="500"></div>
+        <div class="fg"><label for="t2_stoploss">Stop-loss (units)</label><input type="number" id="t2_stoploss" value="200" step="10" min="1"></div>
+        <div class="fg"><label for="t2_wingoal">Win goal (units)</label><input type="number" id="t2_wingoal" value="200" step="10" min="1"></div>
+        <div class="fg"><label for="t2_confidence">Confidence level</label>
+          <select id="t2_confidence">
+            <option value="0.90">90%</option><option value="0.95" selected>95%</option>
+            <option value="0.99">99%</option><option value="0.9545">95.45% (±2σ)</option>
+            <option value="0.6827">68.27% (±1σ)</option>
+          </select>
+        </div>
+        <div class="sd">Rarity Checker</div>
+        <div class="fg"><label for="t2_actual">Actual result (units, optional)</label><input type="number" id="t2_actual" placeholder="e.g. -200 for a $5k loss at $25u"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="ct">Session Statistics</div>
+        <div class="og">
+          <div class="or"><span class="ol">Total hands</span><span class="ov" id="sess_hands_out">—</span></div>
+          <div class="or"><span class="ol">Expected result (units)</span><span class="ov" id="sess_ev_u_out">—</span></div>
+          <div class="or"><span class="ol">Expected result ($)</span><span class="ov" id="sess_ev_out">—</span></div>
+          <div class="or"><span class="ol">Session SD (units)</span><span class="ov" id="sess_sd_u_out">—</span></div>
+          <div class="or"><span class="ol">Session SD ($)</span><span class="ov" id="sess_sd_out">—</span></div>
+        </div>
+        <div class="sd">Result Range — at selected confidence</div>
+        <div class="og">
+          <div class="or"><span class="ol">Lower bound</span><span class="ov"><span id="range_lo_u">—</span> <span class="chip" id="range_lo_d">—</span></span></div>
+          <div class="or"><span class="ol">Upper bound</span><span class="ov"><span id="range_hi_u">—</span> <span class="chip" id="range_hi_d">—</span></span></div>
+          <div class="or"><span class="ol">Result rarity</span><span class="ov" id="rarity_out">— enter result above —</span></div>
+        </div>
+        <div class="sd">Risk &amp; Goals</div>
+        <div class="og">
+          <div class="or"><span class="ol">Trip RoR (BJA3 p.132)</span><span class="ov" id="trip_ror_out">—</span></div>
+          <div class="or"><span class="ol">P(reach goal | no time limit)</span><span class="ov" id="goal_nt_out">—</span></div>
+          <div class="or"><span class="ol">P(reach goal | within session)</span><span class="ov" id="goal_wt_out">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 3 -->
+
+<section class="tab-pane" id="tab3">
+  <div class="disc">⚠ Values marked * are approximate placeholders — verify against BJA3 Ch.10 before production. Click any row to load μ/σ into all tabs.</div>
+  <div class="lc">
+    <div class="fg"><label for="lib_decks">Decks</label><select id="lib_decks"><option value="">All</option><option value="1">1D</option><option value="2">2D</option><option value="6">6D</option><option value="8">8D</option></select></div>
+    <div class="fg"><label for="lib_s17">Dealer rule</label><select id="lib_s17"><option value="">S17 &amp; H17</option><option value="true">S17</option><option value="false">H17</option></select></div>
+    <div class="fg"><label for="lib_style">Style</label><select id="lib_style"><option value="">All</option><option value="Play-All">Play-All</option><option value="Wong-In">Wong-In</option></select></div>
+    <div class="fg"><label for="lib_spread">Max spread ≤</label><select id="lib_spread"><option value="">Any</option><option value="4">1–4</option><option value="6">1–6</option><option value="8">1–8</option><option value="12">1–12</option></select></div>
+  </div>
+  <div id="lib_sel" class="ln"></div>
+  <div class="ltw">
+    <table>
+      <thead><tr><th data-sort="decks">Decks</th><th data-sort="s17">Rule</th><th>DAS/LS</th><th data-sort="pen_pct">Pen%</th><th data-sort="spread_max">Spread</th><th data-sort="style">Style</th><th data-sort="mu100">μ/100</th><th data-sort="sigma100">σ/100</th><th data-sort="score">SCORE ▾</th></tr></thead>
+      <tbody id="lib_tbody"><tr><td colspan="9" class="le">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 4 -->
+
+<section class="tab-pane" id="tab4">
+  <div class="disc">Optimizer uses Gaussian TC frequency approximation. Results propagate to Tabs 1 &amp; 2 automatically.</div>
+  <div class="cl">
+    <div>
+      <div class="card">
+        <div class="ct">Game Configuration</div>
+        <div class="fg"><label for="t4_decks">Decks</label><select id="t4_decks"><option value="1">1</option><option value="2">2</option><option value="6" selected>6</option><option value="8">8</option></select></div>
+        <div class="fg"><label for="t4_s17">Soft 17 rule</label><select id="t4_s17"><option value="true" selected>S17 (stands)</option><option value="false">H17 (hits)</option></select></div>
+        <div class="fg"><label for="t4_das">Double After Split</label><select id="t4_das"><option value="true" selected>Yes</option><option value="false">No</option></select></div>
+        <div class="fg"><label for="t4_ls">Late Surrender</label><select id="t4_ls"><option value="false" selected>No</option><option value="true">Yes</option></select></div>
+        <div class="fg"><label for="t4_pen">Penetration (%)</label><input type="number" id="t4_pen" value="75" step="5" min="40" max="95"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Spread &amp; System</div>
+        <div class="fg"><label for="t4_system">Counting system</label><select id="t4_system"><option value="Hi-Lo" selected>Hi-Lo</option><option value="K-O">K-O (Knock-Out)</option><option value="UBZII">Uston Balanced Zone II</option></select></div>
+        <div class="fg"><label for="t4_spreadmin">Spread minimum (units)</label><input type="number" id="t4_spreadmin" value="1" step="1" min="1" max="20"></div>
+        <div class="fg"><label for="t4_spreadmax">Spread maximum (units)</label><input type="number" id="t4_spreadmax" value="8" step="1" min="2" max="50"></div>
+        <div class="fg"><label for="t4_steps">Bet steps</label><input type="number" id="t4_steps" value="4" step="1" min="2" max="10"></div>
+        <div class="fg"><label for="t4_style">Play style</label><select id="t4_style"><option value="Play-All" selected>Play-All</option><option value="Wong-In">Wong-In</option></select></div>
+        <div class="fg wtg" id="wtg"><label for="t4_wongintc">Wong-in at TC ≥</label><input type="number" id="t4_wongintc" value="1" step="1" min="-2" max="6"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="ct">Optimizer Results</div>
+        <div class="og">
+          <div class="or"><span class="ol">Optimized μ / 100 hands</span><span class="ov" id="opt_mu_out">—</span></div>
+          <div class="or"><span class="ol">Optimized σ / 100 hands</span><span class="ov" id="opt_sigma_out">—</span></div>
+          <div class="or"><span class="ol">SCORE (BJA3 Ch.10)</span><span class="ov" id="opt_score_out">—</span></div>
+          <div class="or"><span class="ol">Desirability Index</span><span class="ov" id="opt_di_out">—</span></div>
+          <div class="or"><span class="ol">Hourly EV ($)</span><span class="ov" id="opt_ev_out">—</span></div>
+          <div class="or"><span class="ol">Hourly SD ($)</span><span class="ov" id="opt_sd_out">—</span></div>
+        </div>
+        <div id="opt_pn" class="pn"></div>
+        <div class="sd">Optimal Bet Ramp</div>
+        <div class="rtw">
+          <table>
+            <thead><tr><th>TC</th><th>Freq%</th><th>Edge%</th><th>Bet (u)</th><th>Bet ($)</th><th>EV/100h</th></tr></thead>
+            <tbody id="ramp_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 5 -->
+
+<section class="tab-pane" id="tab5">
+  <div class="sg">
+    <div class="card">
+      <div class="ct">Display</div>
+      <div class="fg"><label for="settings_decimals">Decimal places</label><select id="settings_decimals"><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="6">6</option></select></div>
+      <div class="cbr"><input type="checkbox" id="settings_help" checked><label for="settings_help">Show status bar help text</label></div>
+    </div>
+    <div class="card">
+      <div class="ct">About</div>
+      <p style="font-size:12px;line-height:1.8;color:var(--tx-d)">
+        <strong style="color:var(--tx)">BJW-RiskLab</strong> v0.1.0-dev<br>stillward labs<br><br>
+        Replaces Blackjack Risk Manager (BJRM) by John Auston (1998–2002).<br>
+        Formulas: Don Schlesinger, <em>Blackjack Attack: Playing the Pros' Way</em>, 3rd ed.<br>
+        Normal CDF: Abramowitz &amp; Stegun, formula 26.2.17
+      </p>
+    </div>
+  </div>
+  <div class="sn">
+    <strong>Data disclaimer:</strong> Game library values are approximate placeholders (marked *). Transcribe from BJA3 Ch.10 tables before production release.<br><br>
+    <strong>Validation:</strong> See <code>VALIDATION_CVCX.md</code> at repo root for the full CVCX test suite.
+  </div>
+</section>
+
+</main>
+
+<footer class="status-bar" id="status-bar">
+  Hover any label for help · Click a game row to load μ/σ · Tab ④ optimizer propagates results to all tabs
+</footer>
+
+<script>
+// ================================================================
+// MATH LIBRARY — all BJA3 formulas
+// ================================================================
+const RM=(()=>{
+  function pdf(z){return Math.exp(-.5*z*z)/Math.sqrt(2*Math.PI);}
+  // A&S 26.2.17
+  function cdf(z){
+    const a=Math.abs(z),t=1/(1+.2316419*a);
+    const p=t*(.31938153+t*(-.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+    const r=1-pdf(a)*p;return z>=0?r:1-r;
+  }
+  // Acklam rational approx
+  function inv(p){
+    if(p<=0)return-Infinity;if(p>=1)return Infinity;
+    const a=[-3.969683028665376e1,2.209460984245205e2,-2.759285104469687e2,1.383577518672690e2,-3.066479806614716e1,2.506628277459239];
+    const b=[-5.447609879822406e1,1.615858368580409e2,-1.556989798598866e2,6.680131188771972e1,-1.328068155288572e1];
+    const c=[-7.784894002430293e-3,-3.223964580411365e-1,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783];
+    const d=[7.784695709041462e-3,3.224671290700398e-1,2.445134137142996,3.754408661907416];
+    const pL=.02425,pH=1-pL;let q,r;
+    if(p<pL){q=Math.sqrt(-2*Math.log(p));return(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+    if(p<=pH){q=p-.5;r=q*q;return(((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+    q=Math.sqrt(-2*Math.log(1-p));return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+  }
+  function rorI(mu,sig,B){if(sig<=0)return NaN;if(mu<=0)return 1;return Math.min(1,Math.exp(-2*mu*B/(sig*sig)));}
+  function reqB(mu,sig,rt){if(rt<=0)return Infinity;if(rt>=1)return 0;if(mu<=0||sig<=0)return Infinity;return-Math.log(rt)*sig*sig/(2*mu);}
+  function n0(mu,sig){if(mu<=0||sig<=0)return Infinity;return Math.pow(sig/mu,2)*100;}
+  function evHr(mu,hph,u){return(mu/100)*hph*u;}
+  function sdSess(sig,N,u){if(N<=0||sig<=0)return 0;return sig*Math.sqrt(N/100)*u;}
+  function mN(mu,N){return mu*(N/100);}
+  function sN(sig,N){return sig*Math.sqrt(N/100);}
+  function range(mu,sig,N,conf){const m=mN(mu,N),s=sN(sig,N),z=inv(.5+conf/2);return[m-z*s,m+z*s];}
+  function rarity(mu,sig,N,R){const m=mN(mu,N),s=sN(sig,N);if(s===0)return R>=m?1:0;return cdf((R-m)/s);}
+  function tripRoR(mu,sig,N,S){
+    if(sig<=0||N<=0||S<=0)return 0;
+    const m=mN(mu,N),s=sN(sig,N),s2=sig*sig;
+    const z1=(-S-m)/s,z2=(-S+m)/s;
+    const e=mu<=0?1:Math.exp(Math.max(-700,-2*mu*S/s2));
+    return Math.min(1,Math.max(0,cdf(z1)+e*cdf(z2)));
+  }
+  function goalNT(mu,sig,S,G){
+    if(sig<=0||S<=0||G<=0)return NaN;if(mu===0)return S/(S+G);
+    const s2=sig*sig;
+    const eS=Math.exp(Math.max(-700,Math.min(700,-2*mu*S/s2)));
+    const eSG=Math.exp(Math.max(-700,Math.min(700,-2*mu*(S+G)/s2)));
+    const dn=1-eSG;if(Math.abs(dn)<1e-15)return NaN;
+    return Math.min(1,Math.max(0,(1-eS)/dn));
+  }
+  function goalWT(mu,sig,N,S,G){
+    if(sig<=0||N<=0||S<=0||G<=0)return NaN;
+    const m=mN(mu,N),s=sN(sig,N);
+    return Math.min(1,Math.max(0,(1-cdf((G-m)/s))*(1-tripRoR(mu,sig,N,S))));
+  }
+  function score(mu,sig){if(sig<=0||mu<=0)return 0;return(mu*mu)/(sig*sig)*100;}
+  function di(mu,sig,hph){return score(mu,sig)*hph/100;}
+  return{cdf,inv,rorI,reqB,n0,evHr,sdSess,mN,sN,range,rarity,tripRoR,goalNT,goalWT,score,di};
+})();
+
+// ================================================================
+// GAME LIBRARY
+// ================================================================
+const GAMES=[
+  {id:'1D-S17-DAS-65-PA-1x4',decks:1,s17:true,das:true,ls:false,pen_pct:65,style:'Play-All',wongInTC:null,spread_max:4,mu100:1.08,sigma100:11.4},
+  {id:'1D-S17-DAS-75-PA-1x4',decks:1,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:4,mu100:1.28,sigma100:11.5},
+  {id:'1D-S17-DAS-75-PA-1x6',decks:1,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:6,mu100:1.52,sigma100:11.9},
+  {id:'2D-S17-DAS-65-PA-1x4',decks:2,s17:true,das:true,ls:false,pen_pct:65,style:'Play-All',wongInTC:null,spread_max:4,mu100:0.68,sigma100:12.0},
+  {id:'2D-S17-DAS-65-PA-1x6',decks:2,s17:true,das:true,ls:false,pen_pct:65,style:'Play-All',wongInTC:null,spread_max:6,mu100:0.92,sigma100:12.4},
+  {id:'2D-S17-DAS-75-PA-1x4',decks:2,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:4,mu100:0.88,sigma100:12.1},
+  {id:'2D-S17-DAS-75-PA-1x6',decks:2,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:6,mu100:1.15,sigma100:12.5},
+  {id:'2D-S17-DAS-75-PA-1x8',decks:2,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:8,mu100:1.32,sigma100:12.9},
+  {id:'2D-H17-DAS-75-PA-1x6',decks:2,s17:false,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:6,mu100:0.98,sigma100:12.4},
+  {id:'2D-S17-DAS-83-PA-1x8',decks:2,s17:true,das:true,ls:false,pen_pct:83,style:'Play-All',wongInTC:null,spread_max:8,mu100:1.55,sigma100:13.0},
+  {id:'2D-S17-DAS-75-W1-1x8',decks:2,s17:true,das:true,ls:false,pen_pct:75,style:'Wong-In',wongInTC:1,spread_max:8,mu100:1.62,sigma100:16.4},
+  {id:'6D-S17-DAS-65-PA-1x4',decks:6,s17:true,das:true,ls:false,pen_pct:65,style:'Play-All',wongInTC:null,spread_max:4,mu100:0.31,sigma100:13.4},
+  {id:'6D-S17-DAS-65-PA-1x8',decks:6,s17:true,das:true,ls:false,pen_pct:65,style:'Play-All',wongInTC:null,spread_max:8,mu100:0.63,sigma100:14.0},
+  {id:'6D-S17-DAS-75-PA-1x4',decks:6,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:4,mu100:0.44,sigma100:13.5},
+  {id:'6D-S17-DAS-75-PA-1x6',decks:6,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:6,mu100:0.67,sigma100:13.9},
+  {id:'6D-S17-DAS-75-PA-1x8',decks:6,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:8,mu100:0.80,sigma100:14.1},
+  {id:'6D-S17-DAS-75-PA-1x12',decks:6,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:12,mu100:0.98,sigma100:15.6},
+  {id:'6D-H17-DAS-75-PA-1x8',decks:6,s17:false,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:8,mu100:0.58,sigma100:14.0},
+  {id:'6D-S17-DAS-83-PA-1x6',decks:6,s17:true,das:true,ls:false,pen_pct:83,style:'Play-All',wongInTC:null,spread_max:6,mu100:0.82,sigma100:14.0},
+  {id:'6D-S17-DAS-83-PA-1x8',decks:6,s17:true,das:true,ls:false,pen_pct:83,style:'Play-All',wongInTC:null,spread_max:8,mu100:0.98,sigma100:14.2},
+  {id:'6D-S17-DAS-83-PA-1x12',decks:6,s17:true,das:true,ls:false,pen_pct:83,style:'Play-All',wongInTC:null,spread_max:12,mu100:1.20,sigma100:15.8},
+  {id:'6D-S17-DAS-75-W1-1x8',decks:6,s17:true,das:true,ls:false,pen_pct:75,style:'Wong-In',wongInTC:1,spread_max:8,mu100:1.15,sigma100:17.2},
+  {id:'6D-S17-DAS-75-W1-1x12',decks:6,s17:true,das:true,ls:false,pen_pct:75,style:'Wong-In',wongInTC:1,spread_max:12,mu100:1.40,sigma100:19.0},
+  {id:'6D-S17-DAS-83-W1-1x12',decks:6,s17:true,das:true,ls:false,pen_pct:83,style:'Wong-In',wongInTC:1,spread_max:12,mu100:1.65,sigma100:19.4},
+  {id:'6D-S17-DAS-LS-75-PA-1x8',decks:6,s17:true,das:true,ls:true,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:8,mu100:0.92,sigma100:13.8},
+  {id:'8D-S17-DAS-65-PA-1x6',decks:8,s17:true,das:true,ls:false,pen_pct:65,style:'Play-All',wongInTC:null,spread_max:6,mu100:0.38,sigma100:14.1},
+  {id:'8D-S17-DAS-75-PA-1x6',decks:8,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:6,mu100:0.50,sigma100:14.2},
+  {id:'8D-S17-DAS-75-PA-1x8',decks:8,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:8,mu100:0.63,sigma100:14.4},
+  {id:'8D-S17-DAS-75-PA-1x12',decks:8,s17:true,das:true,ls:false,pen_pct:75,style:'Play-All',wongInTC:null,spread_max:12,mu100:0.80,sigma100:16.0},
+  {id:'8D-S17-DAS-83-PA-1x8',decks:8,s17:true,das:true,ls:false,pen_pct:83,style:'Play-All',wongInTC:null,spread_max:8,mu100:0.78,sigma100:14.5},
+  {id:'8D-S17-DAS-83-PA-1x12',decks:8,s17:true,das:true,ls:false,pen_pct:83,style:'Play-All',wongInTC:null,spread_max:12,mu100:0.97,sigma100:16.2},
+  {id:'8D-S17-DAS-75-W1-1x12',decks:8,s17:true,das:true,ls:false,pen_pct:75,style:'Wong-In',wongInTC:1,spread_max:12,mu100:1.10,sigma100:19.5},
+  {id:'8D-S17-DAS-83-W1-1x12',decks:8,s17:true,das:true,ls:false,pen_pct:83,style:'Wong-In',wongInTC:1,spread_max:12,mu100:1.30,sigma100:20.0},
+];
+
+// ================================================================
+// BET OPTIMIZER
+// ================================================================
+const SYS={'Hi-Lo':{eTC:.005,base:-.005,sdU:1.15},'K-O':{eTC:.0048,base:-.005,sdU:1.15},'UBZII':{eTC:.0045,base:-.005,sdU:1.15}};
+function tcFreqs(decks,pen){
+  const sig=Math.max(.8,2/Math.sqrt(decks*(1-(pen/100)/2))*Math.sqrt(decks)),phi=RM.cdf,b=[];
+  b.push({tc:-4,freq:phi(-3.5/sig)});
+  for(let tc=-3;tc<=5;tc++)b.push({tc,freq:phi((tc+.5)/sig)-phi((tc-.5)/sig)});
+  b.push({tc:6,freq:1-phi(5.5/sig)});
+  return b;
+}
+function bAdj(s17,das,ls,d){
+  let a=0;if(!s17)a-=.002;if(!das)a-=.0014;if(ls)a+=.0008;
+  if(d===2)a+=.0019;if(d===1)a+=.0037;if(d===8)a-=.0005;return a;
+}
+function runOpt(p){
+  const{decks=6,s17=true,das=true,ls=false,pen=75,smin=1,smax=8,steps=4,sys='Hi-Lo',style='Play-All',wong=1,br=300,hph=80,u=25}=p;
+  const sy=SYS[sys]||SYS['Hi-Lo'];
+  const be=sy.base+bAdj(s17,das,ls,decks);
+  const ef=tcFreqs(decks,pen).map(b=>({...b,freq:style==='Wong-In'&&b.tc<wong?0:b.freq}));
+  const s2=sy.sdU*sy.sdU;
+  const lvls=[];for(let i=0;i<steps;i++)lvls.push(Math.round(smin+(i/(steps-1))*(smax-smin)));
+  function snap(tc){
+    const e=be+tc*sy.eTC;if(e<=0)return smin;
+    const raw=(e/s2)*br,cl=Math.max(smin,Math.min(smax,raw));
+    let best=lvls[0],bd=Infinity;for(const l of lvls){const d=Math.abs(l-cl);if(d<bd){bd=d;best=l;}}return best;
+  }
+  let prev=smin;
+  const ramp=ef.map(b=>{const bet=Math.max(prev,snap(b.tc));prev=bet;return{tc:b.tc,bet,freq:b.freq,edge:be+b.tc*sy.eTC};});
+  let sm=0,sv=0,sf=0;
+  for(const b of ramp){sm+=b.freq*b.edge*b.bet;sv+=b.freq*s2*b.bet*b.bet;sf+=b.freq;}
+  if(sf<1e-10)return{ramp,mu100:0,sigma100:0,sc:0,di:0,evH:0,sdH:0};
+  const mu100=(sm/sf)*100,sigma100=Math.sqrt(Math.max(0,sv/sf))*Math.sqrt(100);
+  return{ramp,mu100:+mu100.toFixed(4),sigma100:+sigma100.toFixed(4),
+    sc:+RM.score(mu100,sigma100).toFixed(4),di:+RM.di(mu100,sigma100,hph).toFixed(4),
+    evH:+RM.evHr(mu100,hph,u).toFixed(2),sdH:+RM.sdSess(sigma100,hph,u).toFixed(0)};
+}
+
+// ================================================================
+// APP STATE & UI
+// ================================================================
+const S={mu:.80,sig:14.0,u:25,hph:80,B:300,rtgt:.01,hrs:8,sl:200,wg:200,act:null,conf:.95,selId:null,
+  d4:6,s17:true,das:true,ls:false,pen:75,smin:1,smax:8,steps:4,sys:'Hi-Lo',style:'Play-All',wong:1,
+  dp:4,showHelp:true};
+
+function fmt(n,d){if(n===null||n===undefined||isNaN(n))return'—';if(!isFinite(n))return n>0?'∞':'-∞';return n.toFixed(d!==undefined?d:S.dp);}
+function fP(p,d=2){if(p===null||isNaN(p))return'—';if(!isFinite(p))return p>0?'100.00%':'—';return(p*100).toFixed(d)+'%';}
+function fD(n,d=0){if(n===null||isNaN(n)||!isFinite(n))return'—';const s=Math.abs(n).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');return(n<0?'-$':'$')+s;}
+function fU(n,d=1){return fmt(n,d)+(isFinite(n)?'u':'');}
+function fH(n){return !isFinite(n)||n>1e9?'∞':Math.round(n).toLocaleString()+' hands';}
+function fHr(n){return !isFinite(n)||n>1e6?'∞':fmt(n,1)+' hrs';}
+function rCls(r){if(r<=.01)return'vs';if(r<=.05)return'vc';if(r<=.135)return'vw';return'vd';}
+function sCls(s){if(s>=.6)return'vs';if(s>=.3)return'vc';if(s>=.1)return'vw';return'vd';}
+function g(id){return document.getElementById(id);}
+function so(id,val,cls){const e=g(id);if(!e)return;e.textContent=val;e.className='ov '+(cls||'');}
+
+const HELP={
+  mu100:'Win Rate per 100 hands in units. Positive = player edge. Source: simulation or BJA3 Ch.10 Game Library.',
+  sigma100:'SD per 100 hands in units. Always positive. Typical range: 12–20 units.',
+  unit_size:'Dollar value of one betting unit. Used for all $ conversions throughout the app.',
+  hph:'Hands Per Hour. Full table ≈ 60–80 HPH; heads-up ≈ 150–200 HPH.',
+  t1_bankroll:'Total playing bankroll in units. RoR is computed for this bankroll level.',
+  t1_targetRor:'Target RoR (0–1 decimal). Used to back-solve required bankroll. E.g. 0.01 = 1%.',
+  t2_hours:'Session length in hours × HPH = total hands. Drives all session calculations.',
+  t2_stoploss:'Stop-loss in units — amount at risk before walking away. Used for trip RoR.',
+  t2_wingoal:'Win goal in units — used for goal probability calculations (BJA3 p.136–139).',
+  t2_actual:'Your actual result in units (+won, −lost). Shows how rare your result was.',
+  t2_confidence:'Confidence level for the result range. 95% = 95% of results fall within the band.',
+  t4_pen:'Cards dealt as % of shoe. More penetration → better for counters.',
+  t4_system:'Counting system. All three are Level 1 balanced (or near-balanced) systems.',
+  t4_spreadmin:'Minimum bet in units (cover bet at neutral/negative counts).',
+  t4_spreadmax:'Maximum bet in units (top bet at high true counts).',
+  t4_steps:'Number of distinct bet sizes. More steps = smoother ramp but harder to execute.',
+};
+function setHelp(txt){if(!S.showHelp)return;const b=g('status-bar');if(b)b.textContent=txt||'';}
+
+// Tab switching
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  const btn=document.querySelector(`.tab-btn[data-tab="${id}"]`);
+  if(btn)btn.classList.add('active');
+  const pane=g(id);if(pane)pane.classList.add('active');
+  if(id==='tab3')renderLib();
+}
+
+// Tab 1
+function cT1(){
+  const{mu:mu,sig,u,hph,B,rtgt}=S;
+  const ror=RM.rorI(mu,sig,B);
+  so('ror_out',fP(ror,3),rCls(ror));
+  const rb=RM.reqB(mu,sig,rtgt);
+  so('req_bank_out',fU(rb,1),'');so('req_bank_dollar',fD(rb*u),'');
+  so('bankroll_dollar',fD(B*u),'');
+  const n0=RM.n0(mu,sig);
+  so('n0_hands_out',fH(n0),'');so('n0_hours_out',fHr(hph>0?n0/hph:Infinity),'');
+  const ev=RM.evHr(mu,hph,u);
+  so('ev_hr_out',fD(ev,2),ev>0?'vs':'vd');
+  so('sd_hr_out',fD(RM.sdSess(sig,hph,u),0),'');
+}
+
+// Tab 2
+function cT2(){
+  const{mu,sig,u,hph,hrs,sl,wg,conf,act}=S;
+  const N=Math.round(hrs*hph);
+  const mn=RM.mN(mu,N),sn=RM.sN(sig,N);
+  so('sess_hands_out',N.toLocaleString()+' hands','');
+  so('sess_ev_u_out',fU(mn,2),mn>=0?'vs':'vd');so('sess_ev_out',fD(mn*u,0),mn>=0?'vs':'vd');
+  so('sess_sd_u_out',fU(sn,2),'');so('sess_sd_out',fD(sn*u,0),'');
+  const[lo,hi]=RM.range(mu,sig,N,conf);
+  g('range_lo_u').textContent=fU(lo,1);g('range_lo_u').className=lo<0?'vd':'';
+  g('range_hi_u').textContent=fU(hi,1);g('range_hi_u').className='vs';
+  g('range_lo_d').textContent=fD(lo*u,0);g('range_hi_d').textContent=fD(hi*u,0);
+  if(act!==null&&!isNaN(act)){
+    const r=RM.rarity(mu,sig,N,act);
+    const str=act<mn?`P(result ≤ ${fmt(act,1)}u) = ${fP(r,3)}`:`P(result ≥ ${fmt(act,1)}u) = ${fP(1-r,3)}`;
+    so('rarity_out',str,act<mn?'vd':'vs');
+  }else so('rarity_out','— enter result above —','');
+  const tr=RM.tripRoR(mu,sig,N,sl);
+  so('trip_ror_out',fP(tr,3),rCls(tr));
+  const gnt=RM.goalNT(mu,sig,sl,wg);
+  const gwt=RM.goalWT(mu,sig,N,sl,wg);
+  so('goal_nt_out',fP(gnt,2),gnt>=.5?'vs':'vw');
+  so('goal_wt_out',fP(gwt,2),gwt>=.5?'vs':'vw');
+}
+
+// Tab 3
+let lsort='score',lasc=false;
+function renderLib(){
+  const dec=g('lib_decks').value,s17=g('lib_s17').value,style=g('lib_style').value,spr=g('lib_spread').value;
+  let gs=GAMES.filter(x=>{
+    if(dec&&x.decks!==parseInt(dec))return false;
+    if(s17!==''&&x.s17!==(s17==='true'))return false;
+    if(style&&x.style!==style)return false;
+    if(spr&&x.spread_max>parseInt(spr))return false;
+    return true;
+  }).map(x=>({...x,score:RM.score(x.mu100,x.sigma100),di:RM.di(x.mu100,x.sigma100,S.hph)}));
+  gs.sort((a,b)=>{let av=a[lsort],bv=b[lsort];if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}return lasc?(av>bv?1:-1):(av<bv?1:-1);});
+  const tb=g('lib_tbody');tb.innerHTML='';
+  if(!gs.length){tb.innerHTML='<tr><td colspan="9" class="le">No games match filters.</td></tr>';return;}
+  gs.forEach(row=>{
+    const tr=document.createElement('tr');
+    if(S.selId===row.id)tr.classList.add('sel');
+    tr.innerHTML=`<td>${row.decks}D</td><td>${row.s17?'S17':'H17'}</td><td>${row.das?'✓':'—'}${row.ls?' LS':''}</td><td>${row.pen_pct}%</td><td>1–${row.spread_max}</td><td>${row.style==='Wong-In'?'Wong+'+row.wongInTC:'Play-All'}</td><td class="nc">${fmt(row.mu100,3)}</td><td class="nc">${fmt(row.sigma100,2)}</td><td class="nc ${sCls(row.score)}">${fmt(row.score,3)}</td>`;
+    tr.addEventListener('click',()=>{
+      S.selId=row.id;S.mu=row.mu100;S.sig=row.sigma100;
+      g('mu100').value=row.mu100;g('sigma100').value=row.sigma100;
+      cT1();cT2();renderLib();
+      const n=g('lib_sel');if(n){n.textContent=`Selected: ${row.decks}D ${row.s17?'S17':'H17'} ${row.pen_pct}% 1–${row.spread_max} ${row.style}  →  μ=${row.mu100}, σ=${row.sigma100}`;n.classList.add('vis');}
+    });
+    tb.appendChild(tr);
+  });
+}
+
+// Tab 4
+function cT4(){
+  const r=runOpt({decks:S.d4,s17:S.s17,das:S.das,ls:S.ls,pen:S.pen,smin:S.smin,smax:S.smax,steps:S.steps,sys:S.sys,style:S.style,wong:S.wong,br:S.B,hph:S.hph,u:S.u});
+  so('opt_mu_out',fmt(r.mu100,4),'');so('opt_sigma_out',fmt(r.sigma100,4),'');
+  so('opt_score_out',fmt(r.sc,4),sCls(r.sc));so('opt_di_out',fmt(r.di,4),'');
+  so('opt_ev_out',fD(r.evH,2),r.evH>0?'vs':'vd');so('opt_sd_out',fD(parseFloat(r.sdH),0),'');
+  const tb=g('ramp_tbody');tb.innerHTML='';
+  const tf=r.ramp.reduce((s,b)=>s+b.freq,0);
+  r.ramp.forEach(b=>{
+    if(b.freq<.0005&&b.bet===S.smin)return;
+    const tr2=document.createElement('tr');
+    const tl=b.tc>=6?'≥+6':b.tc<=-4?'≤-4':(b.tc>=0?'+':'')+b.tc;
+    const fp=tf>0?((b.freq/tf)*100).toFixed(1)+'%':'—';
+    tr2.innerHTML=`<td class="nc">${tl}</td><td class="nc">${fp}</td><td class="nc ${b.edge>0?'vs':'vd'}">${(b.edge*100).toFixed(2)}%</td><td class="nc">${b.bet}u</td><td class="nc">${fD(b.bet*S.u)}</td><td class="nc ${b.edge*b.bet>0?'vs':'vd'}">${fD(b.edge*b.bet*S.u*100,0)}</td>`;
+    tb.appendChild(tr2);
+  });
+  S.mu=r.mu100;S.sig=r.sigma100;
+  g('mu100').value=r.mu100;g('sigma100').value=r.sigma100;
+  cT1();cT2();
+  const n=g('opt_pn');if(n){n.textContent=`μ=${fmt(r.mu100,4)} and σ=${fmt(r.sigma100,4)} propagated to Tabs 1 & 2.`;n.classList.add('vis');}
+}
+
+// Input binding
+function bind(id,key,type,cb){
+  const e=g(id);if(!e)return;
+  e.addEventListener('input',()=>{
+    let v;
+    if(type==='f')v=parseFloat(e.value);
+    else if(type==='i')v=parseInt(e.value);
+    else if(type==='b')v=e.value==='true';
+    else v=e.value;
+    if((type==='f'||type==='i')&&isNaN(v))return;
+    S[key]=v;if(cb)cb();
+  });
+  const h=HELP[id]||HELP[key]||'';
+  if(h){e.addEventListener('focus',()=>setHelp(h));e.addEventListener('mouseenter',()=>setHelp(h));}
+}
+
+// Init
+function init(){
+  bind('mu100','mu','f',()=>{cT1();cT2();});
+  bind('sigma100','sig','f',()=>{cT1();cT2();});
+  bind('unit_size','u','f',()=>{cT1();cT2();});
+  bind('hph','hph','i',()=>{cT1();cT2();renderLib();});
+  bind('t1_bankroll','B','f',cT1);
+  bind('t1_targetRor','rtgt','f',cT1);
+  bind('t2_hours','hrs','f',cT2);
+  bind('t2_stoploss','sl','f',cT2);
+  bind('t2_wingoal','wg','f',cT2);
+  bind('t2_confidence','conf','f',cT2);
+  const ai=g('t2_actual');
+  if(ai)ai.addEventListener('input',()=>{const v=parseFloat(ai.value);S.act=isNaN(v)?null:v;cT2();});
+  ['lib_decks','lib_s17','lib_style','lib_spread'].forEach(id=>{const e=g(id);if(e)e.addEventListener('change',renderLib);});
+  document.querySelectorAll('th[data-sort]').forEach(th=>{
+    th.addEventListener('click',()=>{
+      if(lsort===th.dataset.sort)lasc=!lasc;else{lsort=th.dataset.sort;lasc=false;}
+      renderLib();
+    });
+  });
+  bind('t4_decks','d4','i',cT4);
+  bind('t4_s17','s17','b',cT4);
+  bind('t4_das','das','b',cT4);
+  bind('t4_ls','ls','b',cT4);
+  bind('t4_pen','pen','i',cT4);
+  bind('t4_spreadmin','smin','i',cT4);
+  bind('t4_spreadmax','smax','i',cT4);
+  bind('t4_steps','steps','i',cT4);
+  bind('t4_system','sys','s',cT4);
+  bind('t4_style','style','s',cT4);
+  bind('t4_wongintc','wong','i',cT4);
+  document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.tab)));
+  const dp=g('settings_decimals');if(dp)dp.addEventListener('change',()=>{S.dp=parseInt(dp.value);cT1();cT2();});
+  const hb=g('settings_help');if(hb)hb.addEventListener('change',()=>{S.showHelp=hb.checked;const b=g('status-bar');if(b)b.style.display=hb.checked?'':'none';});
+  const ss=g('t4_style'),wg2=g('wtg');
+  function uW(){if(wg2)wg2.classList.toggle('hid',ss.value!=='Wong-In');}
+  if(ss){ss.addEventListener('change',uW);uW();}
+  cT1();cT2();cT4();
+  switchTab('tab1');
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+
+</body>
+</html>
