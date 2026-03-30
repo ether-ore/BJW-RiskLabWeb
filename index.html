@@ -14,7 +14,7 @@
   --brd:#1c3020;--brd-h:#27452b;
   --acc:#00e58a;--acc-d:#00a863;--acc-g:rgba(0,229,138,.12);
   --tx:#c8e8d0;--tx-d:#547a5e;--tx-m:#2b4530;--tx-l:#7aaa84;
-  --safe:#00e58a;--caut:#d4c038;--warn:#e09020;--dang:#e04848;
+  --safe:#00e58a;--caut:#d4c038;--warn:#e09020;--dang:#ff5533;
   --fmono:'JetBrains Mono','Courier New',monospace;
   --fui:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
   --r:4px;--rl:8px;--tr:.15s ease;
@@ -83,6 +83,7 @@ tbody tr.sel{background:rgba(0,229,138,.07);outline:1px solid var(--acc-d);outli
 .rtw{overflow-x:auto;border:1px solid var(--brd);border-radius:var(--rl);margin-top:14px}
 .pn{font-size:11px;font-family:var(--fmono);color:var(--tx-m);margin-top:10px;min-height:18px}
 .pn.vis{color:var(--acc-d)}
+.badge{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle;border:1px solid currentColor;opacity:.85}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:700px}
 .sn{margin-top:24px;font-size:11px;color:var(--tx-m);line-height:1.6;max-width:600px;border-top:1px solid var(--brd);padding-top:14px}
 .sn code{color:var(--tx-d);font-family:var(--fmono)}
@@ -456,6 +457,14 @@ function fH(n){return !isFinite(n)||n>1e9?'∞':Math.round(n).toLocaleString()+'
 function fHr(n){return !isFinite(n)||n>1e6?'∞':fmt(n,1)+' hrs';}
 function rCls(r){if(r<=.01)return'vs';if(r<=.05)return'vc';if(r<=.135)return'vw';return'vd';}
 function sCls(s){if(s>=.6)return'vs';if(s>=.3)return'vc';if(s>=.1)return'vw';return'vd';}
+// Text labels for color-coded outputs (accessibility: never rely on color alone)
+function rLabel(r){if(r<=.01)return'LOW';if(r<=.05)return'OK';if(r<=.135)return'HIGH';return'DANGER';}
+function sLabel(s){if(s>=.6)return'STRONG';if(s>=.3)return'GOOD';if(s>=.1)return'WEAK';return'POOR';}
+function goalLabel(p){return(isNaN(p)||!isFinite(p))?'':'  '+(p>=.5?'LIKELY':'UNLIKELY');}
+// Always show explicit + sign on positive dollar values
+function fDsign(n,d=2){if(n===null||isNaN(n)||!isFinite(n))return'—';const s=Math.abs(n).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');return(n<0?'−$':'+$')+s;}
+// innerHTML variant so we can include badge spans
+function soH(id,val,cls){const e=g(id);if(!e)return;e.className='ov '+(cls||'');e.innerHTML=val;}
 function g(id){return document.getElementById(id);}
 function so(id,val,cls){const e=g(id);if(!e)return;e.textContent=val;e.className='ov '+(cls||'');}
 
@@ -493,14 +502,15 @@ function switchTab(id){
 function cT1(){
   const{mu:mu,sig,u,hph,B,rtgt}=S;
   const ror=RM.rorI(mu,sig,B);
-  so('ror_out',fP(ror,3),rCls(ror));
+  const rc=rCls(ror);
+  soH('ror_out',fP(ror,3)+'<span class="badge">'+rLabel(ror)+'</span>',rc);
   const rb=RM.reqB(mu,sig,rtgt);
   so('req_bank_out',fU(rb,1),'');so('req_bank_dollar',fD(rb*u),'');
   so('bankroll_dollar',fD(B*u),'');
   const n0=RM.n0(mu,sig);
   so('n0_hands_out',fH(n0),'');so('n0_hours_out',fHr(hph>0?n0/hph:Infinity),'');
   const ev=RM.evHr(mu,hph,u);
-  so('ev_hr_out',fD(ev,2),ev>0?'vs':'vd');
+  soH('ev_hr_out',fDsign(ev,2)+(ev>0?'<span class="badge">POSITIVE</span>':'<span class="badge">NEGATIVE</span>'),ev>0?'vs':'vd');
   so('sd_hr_out',fD(RM.sdSess(sig,hph,u),0),'');
 }
 
@@ -510,23 +520,25 @@ function cT2(){
   const N=Math.round(hrs*hph);
   const mn=RM.mN(mu,N),sn=RM.sN(sig,N);
   so('sess_hands_out',N.toLocaleString()+' hands','');
-  so('sess_ev_u_out',fU(mn,2),mn>=0?'vs':'vd');so('sess_ev_out',fD(mn*u,0),mn>=0?'vs':'vd');
+  soH('sess_ev_u_out',(mn>=0?'+':'\u2212')+fU(Math.abs(mn),2),mn>=0?'vs':'vd');
+  soH('sess_ev_out',fDsign(mn*u,0),mn>=0?'vs':'vd');
   so('sess_sd_u_out',fU(sn,2),'');so('sess_sd_out',fD(sn*u,0),'');
   const[lo,hi]=RM.range(mu,sig,N,conf);
-  g('range_lo_u').textContent=fU(lo,1);g('range_lo_u').className=lo<0?'vd':'';
-  g('range_hi_u').textContent=fU(hi,1);g('range_hi_u').className='vs';
-  g('range_lo_d').textContent=fD(lo*u,0);g('range_hi_d').textContent=fD(hi*u,0);
+  g('range_lo_u').textContent=(lo>=0?'+':'')+fU(lo,1);g('range_lo_u').className=lo<0?'vd':'vs';
+  g('range_hi_u').textContent='+'+fU(hi,1);g('range_hi_u').className='vs';
+  g('range_lo_d').textContent=fDsign(lo*u,0);g('range_hi_d').textContent=fDsign(hi*u,0);
   if(act!==null&&!isNaN(act)){
     const r=RM.rarity(mu,sig,N,act);
-    const str=act<mn?`P(result ≤ ${fmt(act,1)}u) = ${fP(r,3)}`:`P(result ≥ ${fmt(act,1)}u) = ${fP(1-r,3)}`;
+    const str=act<mn?`P(result \u2264 ${fmt(act,1)}u) = ${fP(r,3)}`:`P(result \u2265 ${fmt(act,1)}u) = ${fP(1-r,3)}`;
     so('rarity_out',str,act<mn?'vd':'vs');
   }else so('rarity_out','— enter result above —','');
   const tr=RM.tripRoR(mu,sig,N,sl);
-  so('trip_ror_out',fP(tr,3),rCls(tr));
+  const tc=rCls(tr);
+  soH('trip_ror_out',fP(tr,3)+'<span class="badge">'+rLabel(tr)+'</span>',tc);
   const gnt=RM.goalNT(mu,sig,sl,wg);
   const gwt=RM.goalWT(mu,sig,N,sl,wg);
-  so('goal_nt_out',fP(gnt,2),gnt>=.5?'vs':'vw');
-  so('goal_wt_out',fP(gwt,2),gwt>=.5?'vs':'vw');
+  soH('goal_nt_out',fP(gnt,2)+(isNaN(gnt)?'':'<span class="badge">'+(gnt>=.5?'LIKELY':'UNLIKELY')+'</span>'),gnt>=.5?'vs':'vw');
+  soH('goal_wt_out',fP(gwt,2)+(isNaN(gwt)?'':'<span class="badge">'+(gwt>=.5?'LIKELY':'UNLIKELY')+'</span>'),gwt>=.5?'vs':'vw');
 }
 
 // Tab 3
@@ -561,16 +573,22 @@ function renderLib(){
 function cT4(){
   const r=runOpt({decks:S.d4,s17:S.s17,das:S.das,ls:S.ls,pen:S.pen,smin:S.smin,smax:S.smax,steps:S.steps,sys:S.sys,style:S.style,wong:S.wong,br:S.B,hph:S.hph,u:S.u});
   so('opt_mu_out',fmt(r.mu100,4),'');so('opt_sigma_out',fmt(r.sigma100,4),'');
-  so('opt_score_out',fmt(r.sc,4),sCls(r.sc));so('opt_di_out',fmt(r.di,4),'');
-  so('opt_ev_out',fD(r.evH,2),r.evH>0?'vs':'vd');so('opt_sd_out',fD(parseFloat(r.sdH),0),'');
+  soH('opt_score_out',fmt(r.sc,4)+'<span class="badge">'+sLabel(r.sc)+'</span>',sCls(r.sc));
+  so('opt_di_out',fmt(r.di,4),'');
+  soH('opt_ev_out',fDsign(r.evH,2)+(r.evH>0?'<span class="badge">POSITIVE</span>':'<span class="badge">NEGATIVE</span>'),r.evH>0?'vs':'vd');
+  so('opt_sd_out',fD(parseFloat(r.sdH),0),'');
   const tb=g('ramp_tbody');tb.innerHTML='';
   const tf=r.ramp.reduce((s,b)=>s+b.freq,0);
   r.ramp.forEach(b=>{
     if(b.freq<.0005&&b.bet===S.smin)return;
     const tr2=document.createElement('tr');
-    const tl=b.tc>=6?'≥+6':b.tc<=-4?'≤-4':(b.tc>=0?'+':'')+b.tc;
+    const tl=b.tc>=6?'\u2265+6':b.tc<=-4?'\u2264\u22124':(b.tc>=0?'+':'')+b.tc;
     const fp=tf>0?((b.freq/tf)*100).toFixed(1)+'%':'—';
-    tr2.innerHTML=`<td class="nc">${tl}</td><td class="nc">${fp}</td><td class="nc ${b.edge>0?'vs':'vd'}">${(b.edge*100).toFixed(2)}%</td><td class="nc">${b.bet}u</td><td class="nc">${fD(b.bet*S.u)}</td><td class="nc ${b.edge*b.bet>0?'vs':'vd'}">${fD(b.edge*b.bet*S.u*100,0)}</td>`;
+    // Edge always shows explicit +/- prefix — never rely on color alone
+    const edgePct=(b.edge>=0?'+':'\u2212')+Math.abs(b.edge*100).toFixed(2)+'%';
+    const evSign=(b.edge*b.bet>=0?'+':'\u2212');
+    const evAbs=fD(Math.abs(b.edge*b.bet*S.u*100),0);
+    tr2.innerHTML=`<td class="nc">${tl}</td><td class="nc">${fp}</td><td class="nc ${b.edge>0?'vs':'vd'}">${edgePct}</td><td class="nc">${b.bet}u</td><td class="nc">${fD(b.bet*S.u)}</td><td class="nc ${b.edge*b.bet>0?'vs':'vd'}">${evSign}${evAbs.replace('$','$')}</td>`;
     tb.appendChild(tr2);
   });
   S.mu=r.mu100;S.sig=r.sigma100;
@@ -642,3 +660,4 @@ document.addEventListener('DOMContentLoaded',init);
 
 </body>
 </html>
+
