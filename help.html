@@ -4,342 +4,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BJW-RiskLab — Reference Manual</title>
+<title>BJW-RiskLab &mdash; Reference Manual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
-<style>
-/* ── Design: light, high-contrast, legible at any screen size ── */
-:root {
-  --bg:        #f7f8f5;
-  --bg-s:      #ffffff;
-  --bg-code:   #f0f2ee;
-  --bg-toc:    #f0f2ee;
-  --brd:       #d4d9cc;
-  --brd-s:     #b8c0ae;
-
-–tx:        #1a2015;   /* near-black body text */
-–tx-sub:    #3a4a32;   /* slightly lighter for secondary text */
-–tx-dim:    #6b7a60;   /* captions, labels */
-–tx-muted:  #96a488;   /* very light labels */
-
-–acc:       #1a6e3c;   /* dark green — only for headings & accents */
-–acc-mid:   #2a8a50;   /* mid green — links */
-–acc-light: #d6ede0;   /* light green — highlights */
-
-–code-tx:   #1a4a2a;   /* dark green for code/formula text */
-–code-brd:  #2a8a50;   /* left border on formula blocks */
-
-–safe:      #1a6e3c;
-–warn-bg:   #fff8e6;
-–warn-brd:  #c8960a;
-–warn-tx:   #5a420a;
-–info-bg:   #eaf4ef;
-–info-brd:  #2a8a50;
-–info-tx:   #1a4a2a;
-
-–fmono: ‘JetBrains Mono’, ‘Courier New’, monospace;
-–fui:   ‘IBM Plex Sans’, ‘Segoe UI’, system-ui, sans-serif;
-–fserif:‘IBM Plex Serif’, Georgia, serif;
-
-–r:  4px;
-–rl: 8px;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; scroll-behavior: smooth; }
-
-body {
-background: var(–bg);
-color: var(–tx);
-font-family: var(–fui);
-font-size: 15px;
-line-height: 1.7;
-}
-
-/* ── Header ── */
-.hdr {
-display: flex;
-align-items: center;
-gap: 16px;
-padding: 14px 32px;
-background: var(–acc);
-position: sticky;
-top: 0;
-z-index: 100;
-}
-.logo {
-font-family: var(–fmono);
-font-weight: 600;
-font-size: 14px;
-color: #ffffff;
-letter-spacing: .07em;
-text-transform: uppercase;
-}
-.logo span { color: rgba(255,255,255,0.6); font-weight: 400; }
-.hdr-links {
-margin-left: auto;
-display: flex;
-gap: 20px;
-font-size: 12px;
-font-family: var(–fmono);
-}
-.hdr-links a {
-color: rgba(255,255,255,0.75);
-text-decoration: none;
-padding: 4px 10px;
-border-radius: 3px;
-transition: background .15s, color .15s;
-}
-.hdr-links a:hover { background: rgba(255,255,255,.15); color: #fff; }
-.hdr-links a.here { background: rgba(255,255,255,.2); color: #fff; }
-
-/* ── Page layout ── */
-.page {
-display: flex;
-max-width: 1140px;
-margin: 0 auto;
-padding: 40px 32px 80px;
-gap: 48px;
-}
-@media (max-width: 860px) {
-.page { flex-direction: column; padding: 24px 18px 60px; }
-}
-
-/* ── Sidebar TOC ── */
-.toc {
-width: 210px;
-flex-shrink: 0;
-position: sticky;
-top: 68px;
-max-height: calc(100vh - 90px);
-overflow-y: auto;
-align-self: flex-start;
-}
-.toc-title {
-font-size: 10px;
-font-weight: 600;
-letter-spacing: .12em;
-text-transform: uppercase;
-color: var(–tx-muted);
-margin-bottom: 10px;
-padding-bottom: 6px;
-border-bottom: 1px solid var(–brd);
-}
-.toc ul { list-style: none; }
-.toc li { margin-bottom: 1px; }
-.toc a {
-display: block;
-font-size: 12.5px;
-color: var(–tx-dim);
-text-decoration: none;
-padding: 4px 8px;
-border-radius: var(–r);
-border-left: 2px solid transparent;
-transition: all .12s;
-line-height: 1.4;
-}
-.toc a:hover { color: var(–tx); background: var(–bg-toc); }
-.toc a.active { color: var(–acc); border-left-color: var(–acc); background: var(–acc-light); font-weight: 500; }
-.toc .sub { padding-left: 14px; }
-.toc .sub a { font-size: 12px; }
-@media (max-width: 860px) { .toc { width: 100%; position: static; max-height: none; } }
-
-/* ── Main content ── */
-.content { flex: 1; min-width: 0; }
-
-/* ── Typography ── */
-h1 {
-font-family: var(–fmono);
-font-size: 24px;
-font-weight: 600;
-color: var(–acc);
-letter-spacing: .02em;
-margin-bottom: 10px;
-}
-h2 {
-font-family: var(–fmono);
-font-size: 17px;
-font-weight: 600;
-color: var(–tx);
-letter-spacing: .02em;
-margin: 48px 0 14px;
-padding-bottom: 8px;
-border-bottom: 2px solid var(–acc-light);
-}
-h2:first-of-type { margin-top: 0; }
-h3 {
-font-size: 12px;
-font-weight: 600;
-color: var(–acc);
-letter-spacing: .1em;
-text-transform: uppercase;
-margin: 28px 0 10px;
-}
-h4 {
-font-size: 14px;
-font-weight: 600;
-color: var(–tx-sub);
-margin: 20px 0 8px;
-}
-p {
-color: var(–tx);
-margin-bottom: 14px;
-line-height: 1.75;
-}
-p:last-child { margin-bottom: 0; }
-.lead {
-font-family: var(–fserif);
-font-size: 16px;
-color: var(–tx-sub);
-line-height: 1.8;
-margin-bottom: 24px;
-}
-a { color: var(–acc-mid); text-decoration: none; }
-a:hover { text-decoration: underline; }
-strong { color: var(–tx); font-weight: 600; }
-em { font-style: italic; }
-code {
-font-family: var(–fmono);
-font-size: 12.5px;
-color: var(–code-tx);
-background: var(–bg-code);
-border: 1px solid var(–brd);
-border-radius: 3px;
-padding: 1px 5px;
-}
-
-/* ── Formula blocks ── */
-.formula {
-background: var(–bg-code);
-border: 1px solid var(–brd);
-border-left: 4px solid var(–code-brd);
-border-radius: var(–r);
-padding: 16px 20px;
-margin: 16px 0;
-font-family: var(–fmono);
-font-size: 13px;
-color: var(–code-tx);
-line-height: 1.9;
-overflow-x: auto;
-white-space: pre;
-}
-.formula .c { color: var(–tx-dim); font-size: 11.5px; }
-
-/* ── Tables ── */
-.tbl-wrap { overflow-x: auto; margin: 14px 0; border-radius: var(–rl); border: 1px solid var(–brd); }
-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-thead tr { background: var(–bg-toc); }
-th {
-font-size: 10.5px;
-font-weight: 600;
-letter-spacing: .08em;
-text-transform: uppercase;
-color: var(–tx-dim);
-padding: 9px 14px;
-text-align: left;
-border-bottom: 1px solid var(–brd);
-white-space: nowrap;
-}
-td {
-padding: 9px 14px;
-border-bottom: 1px solid var(–brd);
-vertical-align: top;
-color: var(–tx);
-line-height: 1.5;
-}
-tr:last-child td { border-bottom: none; }
-tbody tr:nth-child(even) { background: rgba(0,0,0,.015); }
-.fn { font-family: var(–fmono); font-size: 12.5px; color: var(–acc); white-space: nowrap; font-weight: 600; }
-.sym { font-family: var(–fmono); font-size: 12.5px; color: var(–tx-sub); white-space: nowrap; }
-
-/* ── Callout boxes ── */
-.callout {
-border: 1px solid var(–brd-s);
-border-left: 4px solid var(–brd-s);
-border-radius: var(–r);
-padding: 12px 16px;
-margin: 18px 0;
-font-size: 13.5px;
-line-height: 1.65;
-color: var(–tx-sub);
-}
-.callout.info  { background: var(–info-bg);  border-left-color: var(–info-brd);  color: var(–info-tx); }
-.callout.warn  { background: var(–warn-bg);  border-left-color: var(–warn-brd);  color: var(–warn-tx); }
-.callout strong { color: inherit; font-weight: 700; }
-
-/* ── Tab label pill ── */
-.tab-pill {
-display: inline-block;
-font-family: var(–fmono);
-font-size: 11px;
-font-weight: 600;
-letter-spacing: .05em;
-text-transform: uppercase;
-padding: 2px 9px;
-border-radius: 3px;
-background: var(–acc-light);
-border: 1px solid var(–code-brd);
-color: var(–acc);
-margin-right: 8px;
-vertical-align: middle;
-}
-
-/* ── Source citation line ── */
-.src { font-size: 11.5px; color: var(–tx-muted); font-style: italic; margin-top: 4px; margin-bottom: 16px; }
-
-/* ── Risk color legend ── */
-.color-row { display: flex; gap: 24px; flex-wrap: wrap; margin: 12px 0; }
-.color-chip { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(–tx-sub); }
-.chip-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
-
-/* ── Glossary ── */
-.glossary-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(–brd); }
-.glossary-item:last-child { border-bottom: none; }
-.gterm { font-family: var(–fmono); font-size: 14px; color: var(–acc); font-weight: 600; margin-bottom: 2px; }
-.gsym  { font-size: 12px; color: var(–tx-muted); margin-bottom: 6px; }
-
-/* ── Section spacing ── */
-.section { margin-bottom: 56px; }
-.section:last-child { margin-bottom: 0; }
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(–bg); }
-::-webkit-scrollbar-thumb { background: var(–brd-s); border-radius: 3px; }
-</style>
-
+<link rel="stylesheet" href="help.css">
 </head>
 <body>
 
 <header class="hdr">
   <div class="logo">BJW&#x2011;RiskLab<span> / Reference Manual</span></div>
   <nav class="hdr-links">
-    <a href="index.html">← Calculator</a>
+    <a href="index.html">&larr; Calculator</a>
     <a href="help.html" class="here">Reference</a>
   </nav>
 </header>
 
 <div class="page">
 
-  <!-- ── Sidebar TOC ── -->
-
   <aside class="toc">
     <div class="toc-title">Contents</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
       <li><a href="#shared">Shared Inputs</a></li>
-      <li>
-        <a href="#tab1">Tab 1 — RoR &amp; Bankroll</a>
+      <li><a href="#tab1">Tab 1 &mdash; RoR &amp; Bankroll</a>
         <ul class="sub">
           <li><a href="#ror">Risk of Ruin</a></li>
           <li><a href="#reqb">Required Bankroll</a></li>
-          <li><a href="#n0">N₀</a></li>
+          <li><a href="#n0">N&#x2080;</a></li>
           <li><a href="#dollar">Dollar Rates</a></li>
         </ul>
       </li>
-      <li>
-        <a href="#tab2">Tab 2 — Session / Trip</a>
+      <li><a href="#tab2">Tab 2 &mdash; Session / Trip</a>
         <ul class="sub">
           <li><a href="#sess">Session Statistics</a></li>
           <li><a href="#range">Result Range</a></li>
@@ -348,15 +44,13 @@ vertical-align: middle;
           <li><a href="#goals">Goal Probabilities</a></li>
         </ul>
       </li>
-      <li>
-        <a href="#tab3">Tab 3 — Game Library</a>
+      <li><a href="#tab3">Tab 3 &mdash; Game Library</a>
         <ul class="sub">
           <li><a href="#libfields">Library Fields</a></li>
           <li><a href="#libscore">SCORE Column</a></li>
         </ul>
       </li>
-      <li>
-        <a href="#tab4">Tab 4 — Bet Optimizer</a>
+      <li><a href="#tab4">Tab 4 &mdash; Bet Optimizer</a>
         <ul class="sub">
           <li><a href="#optinputs">Inputs</a></li>
           <li><a href="#scoredi">SCORE &amp; DI</a></li>
@@ -364,379 +58,211 @@ vertical-align: middle;
           <li><a href="#ramp">Bet Ramp Table</a></li>
         </ul>
       </li>
-      <li><a href="#tab5">Tab 5 — Settings</a></li>
+      <li><a href="#tab5">Tab 5 &mdash; Settings</a></li>
       <li><a href="#glossary">Glossary</a></li>
       <li><a href="#biblio">Bibliography</a></li>
     </ul>
   </aside>
 
-  <!-- ── Main Content ── -->
-
   <main class="content">
 
 ```
-<!-- OVERVIEW -->
 <section class="section" id="overview">
   <h1>BJW-RiskLab Reference Manual</h1>
-  <p class="lead">
-    BJW-RiskLab is a closed-form blackjack risk calculator. It answers the quantitative
-    questions advantage players need before, during, and after a session — bankroll
-    sizing, ruin probability, session variance, goal probability, and bet optimisation —
-    all derived analytically from published formulas, with no Monte Carlo simulation.
-  </p>
-  <p>
-    The primary formula source is Don Schlesinger's <em>Blackjack Attack: Playing the
-    Pros' Way</em>, 3rd edition (BJA3), Chapter 10. This is the same source used by
-    CVCX (Norman Wattenberger) and the original Blackjack Risk Manager (BJRM, John
-    Auston, 1998). The standard normal CDF is implemented via Abramowitz &amp; Stegun
-    (1964) formula 26.2.17.
-  </p>
-
+  <p class="lead">BJW-RiskLab is a closed-form blackjack risk calculator. It answers the quantitative questions advantage players need before, during, and after a session &mdash; bankroll sizing, ruin probability, session variance, goal probability, and bet optimisation &mdash; all derived analytically from published formulas, with no Monte Carlo simulation.</p>
+  <p>The primary formula source is Don Schlesinger&rsquo;s <em>Blackjack Attack: Playing the Pros&rsquo; Way</em>, 3rd edition (BJA3), Chapter 10. This is the same source used by CVCX (Norman Wattenberger) and the original Blackjack Risk Manager (BJRM, John Auston, 1998). The standard normal CDF is implemented via Abramowitz &amp; Stegun (1964) formula 26.2.17.</p>
   <h3>How the tabs connect</h3>
-  <p>
-    The four calculator tabs share common state: <strong>μ₁₀₀</strong> (win rate per
-    100 hands) and <strong>σ₁₀₀</strong> (SD per 100 hands) flow through every
-    calculation. You can type these directly in the shared input bar, or load them
-    automatically by clicking a row in Tab 3 (Game Library) or running Tab 4 (Bet
-    Optimizer). Tab 4 propagates its results back to Tabs 1 and 2 instantly.
-  </p>
-
-  <div class="callout info">
-    <strong>Unit convention:</strong> All risk calculations work in <em>units</em> —
-    multiples of your minimum bet. Dollar figures are derived by multiplying unit
-    values by the "Unit size ($)" field. This convention matches BJA3 and CVCX exactly.
-  </div>
+  <p>The four calculator tabs share common state: <strong>&mu;&#x2081;&#x2080;&#x2080;</strong> (win rate per 100 hands) and <strong>&sigma;&#x2081;&#x2080;&#x2080;</strong> (SD per 100 hands) flow through every calculation. You can type these directly in the shared input bar, or load them automatically by clicking a row in Tab 3 (Game Library) or running Tab 4 (Bet Optimizer). Tab 4 propagates its results back to Tabs 1 and 2 instantly.</p>
+  <div class="callout info"><strong>Unit convention:</strong> All risk calculations work in <em>units</em> &mdash; multiples of your minimum bet. Dollar figures are derived by multiplying unit values by the &ldquo;Unit size ($)&rdquo; field. This convention matches BJA3 and CVCX exactly.</div>
 </section>
 
-<!-- SHARED INPUTS -->
 <section class="section" id="shared">
   <h2>Shared Inputs</h2>
-  <p>
-    These four fields sit in the bar below the header and apply to every tab
-    simultaneously. Changing any one of them triggers an instant recalculation
-    across all tabs.
-  </p>
+  <p>These four fields sit in the bar below the header and apply to every tab simultaneously. Changing any one of them triggers an instant recalculation across all tabs.</p>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>Field</th><th>Symbol</th><th>Unit</th><th>Description</th></tr></thead>
       <tbody>
-        <tr>
-          <td class="fn">μ / 100 hands</td>
-          <td class="sym">μ₁₀₀</td>
-          <td>units</td>
-          <td>Your mean win rate per 100 hands in betting units. Positive = player edge. Typical card counter range: 0.3–1.5 units. Negative values indicate a losing game — the app clamps RoR to 100% and shows a warning. Source: BJA3 Ch.10 simulation data or your own simulator output.</td>
-        </tr>
-        <tr>
-          <td class="fn">σ / 100 hands</td>
-          <td class="sym">σ₁₀₀</td>
-          <td>units</td>
-          <td>Standard deviation of results per 100 hands in units. Captures the inherent volatility of blackjack — the luck component that dominates EV in the short run. Typical range: 12–20 units depending on spread. Must always be positive.</td>
-        </tr>
-        <tr>
-          <td class="fn">Unit size ($)</td>
-          <td class="sym">u</td>
-          <td>dollars</td>
-          <td>Dollar value of one betting unit. All dollar outputs are unit values × this number. If your minimum bet is $25, set this to 25. Does not affect risk calculations — only dollar display values.</td>
-        </tr>
-        <tr>
-          <td class="fn">Hands per hour</td>
-          <td class="sym">HPH</td>
-          <td>hands/hr</td>
-          <td>Your playing speed. Full table (5–6 players) ≈ 60–80 HPH. Heads-up ≈ 150–200 HPH. Used to convert N₀ from hands to hours, and to compute hourly EV and SD.</td>
-        </tr>
+        <tr><td class="fn">&mu; / 100 hands</td><td class="sym">&mu;&#x2081;&#x2080;&#x2080;</td><td>units</td><td>Your mean win rate per 100 hands in betting units. Positive = player edge. Typical counter range: 0.3&ndash;1.5 units. Negative values indicate a losing game. Source: BJA3 Ch.10 or your own simulator output.</td></tr>
+        <tr><td class="fn">&sigma; / 100 hands</td><td class="sym">&sigma;&#x2081;&#x2080;&#x2080;</td><td>units</td><td>Standard deviation of results per 100 hands in units. Captures the volatility inherent to blackjack. Typical range: 12&ndash;20 units. Must always be positive.</td></tr>
+        <tr><td class="fn">Unit size ($)</td><td class="sym">u</td><td>dollars</td><td>Dollar value of one betting unit. All dollar outputs are unit values multiplied by this number. Does not affect risk calculations &mdash; only dollar display values.</td></tr>
+        <tr><td class="fn">Hands per hour</td><td class="sym">HPH</td><td>hands/hr</td><td>Your playing speed. Full table (5&ndash;6 players) &asymp; 60&ndash;80 HPH. Heads-up &asymp; 150&ndash;200 HPH. Used to convert N&#x2080; to hours and compute hourly EV and SD.</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="callout info">
-    <strong>Where to get μ₁₀₀ and σ₁₀₀:</strong> The most reliable source is BJA3
-    Chapter 10, which provides simulation-derived values for over 100 game scenarios.
-    These are pre-loaded in Tab 3. You can also compute custom values using Tab 4 or
-    a simulator like CVCX.
-  </div>
+  <div class="callout info"><strong>Where to get &mu;&#x2081;&#x2080;&#x2080; and &sigma;&#x2081;&#x2080;&#x2080;:</strong> The most reliable source is BJA3 Chapter 10, which provides simulation-derived values for over 100 game scenarios. These are pre-loaded in Tab 3. You can also compute custom values using Tab 4 or a simulator like CVCX.</div>
 </section>
 
-<!-- TAB 1 -->
 <section class="section" id="tab1">
   <h2><span class="tab-pill">Tab 1</span> Risk of Ruin &amp; Bankroll</h2>
-  <p>
-    Tab 1 answers the foundational bankroll questions: given your edge and bankroll
-    size, what is the probability of going broke? How large does your bankroll need to
-    be for a given safety target? How long until your edge overcomes luck? How much do
-    you earn per hour?
-  </p>
-
+  <p>Tab 1 answers the foundational bankroll questions: given your edge and bankroll size, what is the probability of going broke? How large does your bankroll need to be for a given safety target? How long until your edge overcomes luck? How much do you earn per hour?</p>
   <h4>Tab 1 inputs</h4>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>Field</th><th>Symbol</th><th>Description</th></tr></thead>
       <tbody>
-        <tr>
-          <td class="fn">Bankroll (units)</td><td class="sym">B</td>
-          <td>Total units dedicated to blackjack — your full playing bankroll, not a trip stake. Setting this accurately is critical; using a trip stake instead overstates RoR significantly.</td>
-        </tr>
-        <tr>
-          <td class="fn">Target RoR</td><td class="sym">RoR*</td>
-          <td>Maximum ruin probability you will accept, as a decimal (e.g. 0.01 = 1%). Used only for the Required Bankroll output — does not affect the RoR calculation for bankroll B.</td>
-        </tr>
+        <tr><td class="fn">Bankroll (units)</td><td class="sym">B</td><td>Total units dedicated to blackjack &mdash; your full playing bankroll, not a trip stake. Using a trip stake instead will significantly overstate RoR.</td></tr>
+        <tr><td class="fn">Target RoR</td><td class="sym">RoR*</td><td>Maximum ruin probability you will accept, as a decimal (e.g. 0.01 = 1%). Used only for the Required Bankroll output &mdash; does not affect the RoR calculation for bankroll B.</td></tr>
       </tbody>
     </table>
   </div>
 
   <h3 id="ror">Risk of Ruin (infinite play)</h3>
-  <p>
-    The probability that your bankroll will eventually reach zero if you play
-    indefinitely with no quit point. This is the most commonly cited RoR figure
-    in blackjack literature.
-  </p>
-  <div class="formula">RoR = exp( −2 × μ₁₀₀ × B / σ₁₀₀² )
-```
-
-<span class="c">where:
-μ₁₀₀  = win rate per 100 hands (units)
-σ₁₀₀  = standard deviation per 100 hands (units)
-B      = bankroll (units)
-exp()  = natural exponential function</span></div>
-<p class="src">Source: BJA3 p.112. Per-hand and per-100-hand values cancel exactly in this formula.</p>
-
-```
-  <p>
-    The formula assumes infinite play time and no quit point. Because real players
-    do stop (after winning, hitting a stop-loss, or finishing a session), this is a
-    conservative overestimate for any real scenario.
-  </p>
-
+  <p>The probability that your bankroll will eventually reach zero if you play indefinitely with no quit point.</p>
+  <div class="formula">
+    RoR = exp( &minus;2 &times; &mu;&#x2081;&#x2080;&#x2080; &times; B / &sigma;&#x2081;&#x2080;&#x2080;&sup2; )<br>
+    <br>
+    <span class="c">where:<br>
+    &nbsp;&nbsp;&mu;&#x2081;&#x2080;&#x2080; = win rate per 100 hands (units)<br>
+    &nbsp;&nbsp;&sigma;&#x2081;&#x2080;&#x2080; = standard deviation per 100 hands (units)<br>
+    &nbsp;&nbsp;B &nbsp;&nbsp;&nbsp;= bankroll (units)<br>
+    &nbsp;&nbsp;exp() = natural exponential function</span>
+  </div>
+  <p class="src">Source: BJA3 p.112. Per-hand and per-100-hand values cancel exactly in this formula.</p>
+  <p>The formula assumes infinite play time and no quit point. Because real players do stop, this is a conservative overestimate for any real scenario.</p>
   <h4>Risk level colour coding</h4>
   <div class="color-row">
-    <div class="color-chip"><div class="chip-dot" style="background:#1a6e3c"></div><strong style="color:#1a6e3c">≤ 1%</strong> &nbsp;Professional standard (~quarter Kelly)</div>
-    <div class="color-chip"><div class="chip-dot" style="background:#a07a00"></div><strong style="color:#a07a00">1–5%</strong> &nbsp;Acceptable for most players</div>
-    <div class="color-chip"><div class="chip-dot" style="background:#b85000"></div><strong style="color:#b85000">5–13.5%</strong> &nbsp;Aggressive; approaches full Kelly</div>
-    <div class="color-chip"><div class="chip-dot" style="background:#c0282a"></div><strong style="color:#c0282a">&gt;13.5%</strong> &nbsp;Over-Kelly; bankroll too small for unit size</div>
+    <div class="color-chip"><div class="chip-dot" style="background:#1a6e3c"></div><strong style="color:#1a6e3c">&le; 1%</strong>&nbsp; Professional standard (&asymp; quarter Kelly)</div>
+    <div class="color-chip"><div class="chip-dot" style="background:#a07a00"></div><strong style="color:#a07a00">1&ndash;5%</strong>&nbsp; Acceptable for most players</div>
+    <div class="color-chip"><div class="chip-dot" style="background:#b85000"></div><strong style="color:#b85000">5&ndash;13.5%</strong>&nbsp; Aggressive; approaches full Kelly</div>
+    <div class="color-chip"><div class="chip-dot" style="background:#c0282a"></div><strong style="color:#c0282a">&gt;13.5%</strong>&nbsp; Over-Kelly; bankroll too small for unit size</div>
   </div>
 
   <h3 id="reqb">Required Bankroll</h3>
-  <p>
-    The RoR formula rearranged to find bankroll B given a target RoR:
-  </p>
-  <div class="formula">B = −ln(RoR*) × σ₁₀₀² / ( 2 × μ₁₀₀ )
-```
-
-<span class="c">where:
-RoR*  = target risk of ruin (e.g. 0.01 for 1%)
-ln()  = natural logarithm</span></div>
-<p class="src">Source: BJA3 p.112, rearranged. This is an exact algebraic inverse of the RoR formula.</p>
-
-```
-  <div class="callout info">
-    <strong>Common benchmarks:</strong> 1% RoR requires roughly 460 units for a typical
-    6D game (μ=0.80, σ=14). 13.5% RoR (full Kelly) requires roughly 245 units for
-    the same game — exactly half the 1% bankroll.
+  <p>The RoR formula rearranged to find bankroll B given a target RoR:</p>
+  <div class="formula">
+    B = &minus;ln(RoR*) &times; &sigma;&#x2081;&#x2080;&#x2080;&sup2; / ( 2 &times; &mu;&#x2081;&#x2080;&#x2080; )<br>
+    <br>
+    <span class="c">where:<br>
+    &nbsp;&nbsp;RoR* = target risk of ruin (e.g. 0.01 for 1%)<br>
+    &nbsp;&nbsp;ln() &nbsp;= natural logarithm</span>
   </div>
+  <p class="src">Source: BJA3 p.112, rearranged. Exact algebraic inverse of the RoR formula.</p>
+  <div class="callout info"><strong>Common benchmarks:</strong> 1% RoR requires roughly 460 units for a typical 6D game (&mu;=0.80, &sigma;=14). 13.5% RoR (full Kelly) requires roughly 245 units for the same game &mdash; exactly half the 1% bankroll.</div>
 
-  <h3 id="n0">N₀ — Hands to Overcome Variance</h3>
-  <p>
-    N₀ (N-naught) is the number of hands at which your cumulative expected profit (EV)
-    equals one standard deviation of your cumulative results. It marks the threshold
-    where skill begins to statistically dominate luck.
-  </p>
-  <div class="formula">N₀ = ( σ₁₀₀ / μ₁₀₀ )² × 100
-```
-
-<span class="c">Units: hands.
-Before N₀ hands: variance dominates; results are mostly noise.
-After  N₀ hands: EV dominates; your edge becomes statistically visible.</span></div>
-<p class="src">Source: BJA3 Chapter 10. Lower N₀ means the edge overcomes luck sooner — a better game.</p>
-
-```
-  <p>
-    N₀ is displayed in both hands and hours (dividing by HPH). A typical 6-deck
-    counter with a 1–12 spread at 75% penetration has N₀ around 25,000–35,000 hands —
-    roughly 300–450 hours at 80 HPH. This is why short-run results tell you almost
-    nothing about whether you are actually playing well.
-  </p>
+  <h3 id="n0">N&#x2080; &mdash; Hands to Overcome Variance</h3>
+  <p>N&#x2080; (N-naught) is the number of hands at which your cumulative expected profit equals one standard deviation of your cumulative results. It marks the threshold where skill begins to statistically dominate luck.</p>
+  <div class="formula">
+    N&#x2080; = ( &sigma;&#x2081;&#x2080;&#x2080; / &mu;&#x2081;&#x2080;&#x2080; )&sup2; &times; 100<br>
+    <br>
+    <span class="c">Units: hands.<br>
+    Before N&#x2080; hands: variance dominates; results are mostly noise.<br>
+    After &nbsp;N&#x2080; hands: EV dominates; your edge becomes statistically visible.</span>
+  </div>
+  <p class="src">Source: BJA3 Chapter 10. Lower N&#x2080; means the edge overcomes luck sooner &mdash; a better game.</p>
+  <p>A typical 6-deck counter with a 1&ndash;12 spread at 75% penetration has N&#x2080; around 25,000&ndash;35,000 hands &mdash; roughly 300&ndash;450 hours at 80 HPH. This is why short-run results tell you almost nothing about whether you are playing well.</p>
 
   <h3 id="dollar">Dollar Rates</h3>
-  <div class="formula">Hourly EV ($)  = ( μ₁₀₀ / 100 ) × HPH × u
-```
-
-Hourly SD ($)  = σ₁₀₀ × sqrt( HPH / 100 ) × u
-
-<span class="c">where u = unit size in dollars, HPH = hands per hour</span></div>
-
-```
-  <p>
-    Hourly SD is the standard deviation of results over one hour of play. About 68%
-    of one-hour sessions fall within ±1 SD of the EV; about 95% within ±2 SD. Notice
-    that EV scales linearly with time, while SD scales with the square root — so
-    longer sessions have better signal-to-noise ratios.
-  </p>
+  <div class="formula">
+    Hourly EV ($) = ( &mu;&#x2081;&#x2080;&#x2080; / 100 ) &times; HPH &times; u<br>
+    <br>
+    Hourly SD ($) = &sigma;&#x2081;&#x2080;&#x2080; &times; &radic;( HPH / 100 ) &times; u<br>
+    <br>
+    <span class="c">where u = unit size in dollars, HPH = hands per hour</span>
+  </div>
+  <p>EV scales linearly with time; SD scales with the square root. Longer sessions have better signal-to-noise ratios. About 68% of one-hour sessions fall within &plusmn;1 SD of the EV; about 95% within &plusmn;2 SD.</p>
 </section>
 
-<!-- TAB 2 -->
 <section class="section" id="tab2">
   <h2><span class="tab-pill">Tab 2</span> Session / Trip Analysis</h2>
-  <p>
-    Tab 2 analyses a finite playing session defined by its duration, stop-loss, and
-    win goal. It answers: "What is the realistic range of outcomes for my 10-hour
-    trip?", "How likely am I to hit my stop-loss?", and "Was my result unusually bad
-    or just normal variance?"
-  </p>
-
+  <p>Tab 2 analyses a finite playing session. It answers: &ldquo;What is the realistic range of outcomes for my 10-hour trip?&rdquo;, &ldquo;How likely am I to hit my stop-loss?&rdquo;, and &ldquo;Was my result unusually bad or just normal variance?&rdquo;</p>
   <h4>Tab 2 inputs</h4>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>Field</th><th>Symbol</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td class="fn">Hours of play</td><td class="sym">H</td><td>Session duration. Multiplied by HPH to get total hands N = H × HPH.</td></tr>
-        <tr><td class="fn">Stop-loss (units)</td><td class="sym">S</td><td>Amount you are willing to lose before ending the session. Enter as a positive number. Used in trip RoR and goal probability calculations.</td></tr>
+        <tr><td class="fn">Hours of play</td><td class="sym">H</td><td>Session duration. Multiplied by HPH to get total hands N = H &times; HPH.</td></tr>
+        <tr><td class="fn">Stop-loss (units)</td><td class="sym">S</td><td>Amount you are willing to lose before ending the session. Enter as a positive number.</td></tr>
         <tr><td class="fn">Win goal (units)</td><td class="sym">G</td><td>Profit target at which you would stop playing. Enter as a positive number.</td></tr>
-        <tr><td class="fn">Confidence level</td><td>—</td><td>Width of the result range interval. 95% means 95% of session outcomes fall within the displayed bounds. Choose 95.45% for exact ±2σ, or 68.27% for ±1σ.</td></tr>
-        <tr><td class="fn">Actual result (units)</td><td class="sym">R</td><td>Optional. Enter your actual session result (positive if won, negative if lost) to compute how unusual it was. Leave blank to skip.</td></tr>
+        <tr><td class="fn">Confidence level</td><td>&mdash;</td><td>Width of the result range interval. 95% means 95% of session outcomes fall within the displayed bounds. Choose 95.45% for exact &plusmn;2&sigma;, or 68.27% for &plusmn;1&sigma;.</td></tr>
+        <tr><td class="fn">Actual result (units)</td><td class="sym">R</td><td>Optional. Enter your actual result (positive if won, negative if lost) to compute how unusual it was. Leave blank to skip.</td></tr>
       </tbody>
     </table>
   </div>
 
   <h3 id="sess">Session Statistics</h3>
-  <p>For a session of N = H × HPH hands, the cumulative mean and SD are:</p>
-  <div class="formula">Mean result (units)  = μ₁₀₀ × ( N / 100 )
-```
-
-SD of result (units) = σ₁₀₀ × sqrt( N / 100 )
-
-Mean result ($)  = Mean result (units) × u
-SD of result ($) = SD of result (units) × u</div>
-<p class="src">Source: Central Limit Theorem applied to i.i.d. hand outcomes; BJA3 Chapter 10.</p>
-
-```
-  <h3 id="range">Result Range (Confidence Interval)</h3>
-  <p>
-    Given confidence level C, the interval [lo, hi] contains (C × 100)% of all
-    possible N-hand session outcomes:
-  </p>
-  <div class="formula">z  = Φ⁻¹( 0.5 + C/2 )          <span class="c">(inverse normal CDF)</span>
-```
-
-lo = Mean − z × SD
-hi = Mean + z × SD
-
-<span class="c">Examples:
-C = 0.95    →  z = 1.9600  →  95% of outcomes fall in [lo, hi]
-C = 0.9545  →  z = 2.0000  →  exactly ±2σ band
-C = 0.6827  →  z = 1.0000  →  exactly ±1σ band</span></div>
-
-```
-  <div class="callout warn">
-    <strong>Important:</strong> The result range is centred on your expected profit,
-    not on zero. A counter with a positive edge will have an interval that is
-    asymmetrically shifted upward. Even the lower bound may be positive for long
-    sessions with strong edges.
+  <p>For a session of N = H &times; HPH hands:</p>
+  <div class="formula">
+    Mean result (units) = &mu;&#x2081;&#x2080;&#x2080; &times; ( N / 100 )<br>
+    SD of result (units) = &sigma;&#x2081;&#x2080;&#x2080; &times; &radic;( N / 100 )<br>
+    <br>
+    Mean result ($) = Mean result (units) &times; u<br>
+    SD of result ($) = SD of result (units) &times; u
   </div>
+  <p class="src">Source: Central Limit Theorem applied to i.i.d. hand outcomes; BJA3 Chapter 10.</p>
+
+  <h3 id="range">Result Range (Confidence Interval)</h3>
+  <p>Given confidence level C, the interval [lo, hi] contains (C &times; 100)% of all possible N-hand session outcomes:</p>
+  <div class="formula">
+    z &nbsp;= &Phi;&sup1;( 0.5 + C/2 ) &nbsp;&nbsp;&nbsp;<span class="c">(inverse normal CDF)</span><br>
+    lo = Mean &minus; z &times; SD<br>
+    hi = Mean + z &times; SD<br>
+    <br>
+    <span class="c">Examples:<br>
+    &nbsp;&nbsp;C = 0.95 &nbsp;&nbsp;&rarr; z = 1.9600 &rarr; 95% of outcomes fall in [lo, hi]<br>
+    &nbsp;&nbsp;C = 0.9545 &rarr; z = 2.0000 &rarr; exactly &plusmn;2&sigma; band<br>
+    &nbsp;&nbsp;C = 0.6827 &rarr; z = 1.0000 &rarr; exactly &plusmn;1&sigma; band</span>
+  </div>
+  <div class="callout warn"><strong>Important:</strong> The result range is centred on your expected profit, not on zero. A counter with a positive edge will have an interval that is asymmetrically shifted upward. Even the lower bound may be positive for long sessions with strong edges.</div>
 
   <h3 id="rarity">Result Rarity</h3>
-  <p>
-    Enter your actual trip result R to compute how unusual it was relative to
-    expectation.
-  </p>
-  <div class="formula">z = ( R − Mean ) / SD
-```
-
-P(result ≤ R)  = Φ(z)         <span class="c">  “this bad or worse”</span>
-P(result ≥ R)  = 1 − Φ(z)     <span class="c">  “this good or better”</span>
-
-<span class="c">The app displays the appropriate direction:
-If R < Mean → shows P(result ≤ R)
-If R ≥ Mean → shows P(result ≥ R)</span></div>
-
-```
-  <p>
-    For example: lost $5,000 in 6 hours at $25 units (= −200 units). The rarity
-    calculation shows what fraction of 6-hour sessions produce a result that bad or
-    worse. A value below 5% indicates the result was in the left tail — bad variance,
-    not necessarily bad play.
-  </p>
+  <p>Enter your actual trip result R to compute how unusual it was relative to expectation.</p>
+  <div class="formula">
+    z = ( R &minus; Mean ) / SD<br>
+    <br>
+    P(result &le; R) = &Phi;(z) &nbsp;&nbsp;&nbsp;<span class="c">"this bad or worse"</span><br>
+    P(result &ge; R) = 1 &minus; &Phi;(z) &nbsp;<span class="c">"this good or better"</span><br>
+    <br>
+    <span class="c">If R &lt; Mean: displays P(result &le; R)<br>
+    If R &ge; Mean: displays P(result &ge; R)</span>
+  </div>
+  <p>A value below 5% indicates the result was in the left tail of the distribution &mdash; bad variance, not necessarily bad play.</p>
 
   <h3 id="tripror">Trip Risk of Ruin</h3>
-  <p>
-    The probability of hitting your stop-loss during a finite session of N hands.
-    This is always lower than infinite-play RoR because you eventually stop playing.
-  </p>
-  <div class="formula">Trip RoR ≈  Φ(z₁)  +  exp( −2μS / σ²_per_hand ) × Φ(z₂)
-```
-
-where:
-z₁ = ( −S − μN ) / σN
-z₂ = ( −S + μN ) / σN
-μN = μ₁₀₀ × (N/100)          <span class="c">(cumulative mean)</span>
-σN = σ₁₀₀ × sqrt(N/100)      <span class="c">(cumulative SD)</span>
-σ²_per_hand = σ₁₀₀² / 100
-S  = stop-loss in units (positive value)</div>
-<p class="src">Source: BJA3 p.132, “The Short-Term, or Trip, Ruin Formula.”</p>
-
-```
-  <div class="callout warn">
-    <strong>Known overestimate:</strong> Schlesinger and Wattenberger both document that
-    this formula slightly overestimates trip RoR compared to simulation. CVCX produces
-    the same formula result, so BJW-RiskLab and CVCX will agree; both are marginally
-    conservative relative to a full Monte Carlo result.
+  <p>The probability of hitting your stop-loss during a finite session of N hands. Always lower than infinite-play RoR because you eventually stop playing.</p>
+  <div class="formula">
+    Trip RoR &asymp; &Phi;(z&#x2081;) + exp( &minus;2&mu;S / &sigma;&sup2;_per_hand ) &times; &Phi;(z&#x2082;)<br>
+    <br>
+    <span class="c">where:<br>
+    &nbsp;&nbsp;z&#x2081; = ( &minus;S &minus; &mu;N ) / &sigma;N<br>
+    &nbsp;&nbsp;z&#x2082; = ( &minus;S + &mu;N ) / &sigma;N<br>
+    &nbsp;&nbsp;&mu;N = &mu;&#x2081;&#x2080;&#x2080; &times; (N/100) &nbsp;&nbsp;&nbsp;(cumulative mean)<br>
+    &nbsp;&nbsp;&sigma;N = &sigma;&#x2081;&#x2080;&#x2080; &times; &radic;(N/100) &nbsp;(cumulative SD)<br>
+    &nbsp;&nbsp;&sigma;&sup2;_per_hand = &sigma;&#x2081;&#x2080;&#x2080;&sup2; / 100<br>
+    &nbsp;&nbsp;S = stop-loss in units (positive value)</span>
   </div>
+  <p class="src">Source: BJA3 p.132, &ldquo;The Short-Term, or Trip, Ruin Formula.&rdquo;</p>
+  <div class="callout warn"><strong>Known overestimate:</strong> Schlesinger and Wattenberger both document that this formula slightly overestimates trip RoR compared to simulation. CVCX produces the same formula result, so BJW-RiskLab and CVCX will agree; both are marginally conservative relative to a full Monte Carlo result.</div>
 
   <h3 id="goals">Goal Probabilities</h3>
-
-  <h4>P(reach goal | no time limit) — BJA3 p.138–139</h4>
-  <p>
-    Probability of reaching win goal G before losing stop-loss S, with unlimited time:
-  </p>
-  <div class="formula">P = ( 1 − exp(−α_S) ) / ( 1 − exp(−α_{S+G}) )
-```
-
-where:
-α_X = 2 × μ₁₀₀ × X / σ₁₀₀²
-
-<span class="c">Special case: if μ₁₀₀ = 0 (fair game), P = S / (S + G)</span></div>
-
-```
-  <p>
-    This derives from the continuous Gambler's Ruin with drift. When G = S (trying to
-    double your stake), a counter with positive edge always has P > 0.5.
-  </p>
-
-  <h4>P(reach goal | within session) — BJA3 p.136–137</h4>
-  <p>
-    A time-constrained approximation: the probability of reaching G before S within
-    the session hours. BJW-RiskLab uses:
-  </p>
-  <div class="formula">P_time ≈  P(reach G in N hands)  ×  P(survive session)
-```
-
-where:
-P(reach G in N hands) = 1 − Φ( (G − μN) / σN )
-P(survive session)    = 1 − Trip RoR
-
-<span class="c">This is an approximation. The exact formula (BJA3 p.137) requires an
-infinite series. The approximation is adequate for most practical inputs.</span></div>
+  <h4>P(reach goal | no time limit) &mdash; BJA3 p.138&ndash;139</h4>
+  <p>Probability of reaching win goal G before losing stop-loss S, with unlimited time:</p>
+  <div class="formula">
+    P = ( 1 &minus; exp(&minus;&alpha;_S) ) / ( 1 &minus; exp(&minus;&alpha;_(S+G)) )<br>
+    <br>
+    <span class="c">where:<br>
+    &nbsp;&nbsp;&alpha;_X = 2 &times; &mu;&#x2081;&#x2080;&#x2080; &times; X / &sigma;&#x2081;&#x2080;&#x2080;&sup2;<br>
+    <br>
+    Special case: if &mu;&#x2081;&#x2080;&#x2080; = 0 (fair game), P = S / (S + G)</span>
+  </div>
+  <h4>P(reach goal | within session) &mdash; BJA3 p.136&ndash;137</h4>
+  <div class="formula">
+    P_time &asymp; P(reach G in N hands) &times; P(survive session)<br>
+    <br>
+    <span class="c">where:<br>
+    &nbsp;&nbsp;P(reach G in N hands) = 1 &minus; &Phi;( (G &minus; &mu;N) / &sigma;N )<br>
+    &nbsp;&nbsp;P(survive session) &nbsp;&nbsp;= 1 &minus; Trip RoR<br>
+    <br>
+    This is an approximation. The exact formula (BJA3 p.137) requires an<br>
+    infinite series. Adequate for most practical inputs.</span>
+  </div>
 </section>
 
-```
-<!-- TAB 3 -->
 <section class="section" id="tab3">
   <h2><span class="tab-pill">Tab 3</span> Game Library</h2>
-  <p>
-    A searchable, sortable reference table of pre-computed μ₁₀₀ and σ₁₀₀ values for
-    standard blackjack scenarios, mirroring BJA3 Chapter 10. Each scenario was simulated
-    for 400 million or more rounds using a Hi-Lo counter with Illustrious 18 and Fab 4
-    strategy departures.
-  </p>
-  <p>
-    <strong>Click any row</strong> to load that scenario's μ₁₀₀ and σ₁₀₀ into the
-    shared inputs and instantly recalculate all tabs. Click any column header to sort.
-  </p>
-
-  <div class="callout warn">
-    <strong>Data status:</strong> Library values are currently approximate placeholders
-    (marked *). Before using them for real bankroll decisions, verify against the
-    physical BJA3 Chapter 10 tables. Game IDs and structure are final; only the
-    μ₁₀₀ and σ₁₀₀ numbers require transcription from the book.
-  </div>
-
+  <p>A searchable, sortable reference table of pre-computed &mu;&#x2081;&#x2080;&#x2080; and &sigma;&#x2081;&#x2080;&#x2080; values for standard blackjack scenarios, mirroring BJA3 Chapter 10. Each scenario was simulated for 400 million or more rounds using a Hi-Lo counter with Illustrious 18 and Fab 4 strategy departures.</p>
+  <p><strong>Click any row</strong> to load that scenario&rsquo;s &mu;&#x2081;&#x2080;&#x2080; and &sigma;&#x2081;&#x2080;&#x2080; into the shared inputs and instantly recalculate all tabs. Click any column header to sort.</p>
+  <div class="callout warn"><strong>Data status:</strong> Library values are currently approximate placeholders (marked *). Before using them for real bankroll decisions, verify against the physical BJA3 Chapter 10 tables.</div>
   <h3 id="libfields">Library Fields</h3>
   <div class="tbl-wrap">
     <table>
@@ -744,33 +270,23 @@ infinite series. The approximation is adequate for most practical inputs.</span>
       <tbody>
         <tr><td class="fn">Decks</td><td>Number of decks in the shoe. BJA3 covers 1D, 2D, 6D, and 8D.</td></tr>
         <tr><td class="fn">Rule</td><td>S17 = dealer stands on soft 17 (better for player). H17 = dealer hits soft 17, costing roughly 0.22% in player edge.</td></tr>
-        <tr><td class="fn">DAS / LS</td><td>✓ = Double After Split allowed. LS = Late Surrender available (saves roughly 0.08%). Both affect base edge and optimal strategy.</td></tr>
-        <tr><td class="fn">Pen%</td><td>Penetration — percentage of shoe dealt before shuffle. Higher penetration is better for the counter. The most impactful variable after deck count; compare 65% vs 83% penetration on otherwise identical games to see the difference.</td></tr>
-        <tr><td class="fn">Spread</td><td>Bet spread from minimum to maximum units. A 1–8 spread means 1 unit at neutral counts up to 8 units at high counts. Wider spreads increase both μ₁₀₀ and σ₁₀₀.</td></tr>
-        <tr><td class="fn">Style</td><td>Play-All = every hand played regardless of count. Wong-In = back-counting; you sit down only when the true count reaches the threshold. Wonging substantially increases μ₁₀₀ and σ₁₀₀ by concentrating play at positive counts.</td></tr>
-        <tr><td class="fn">μ/100</td><td>Win rate per 100 hands in units, from BJA3 Chapter 10 simulation data. Values under 0.5 are modest edges; over 1.0 represents a strong game.</td></tr>
-        <tr><td class="fn">σ/100</td><td>Standard deviation per 100 hands in units. Wider spreads and wonging produce higher σ₁₀₀. This drives all variance calculations throughout the app.</td></tr>
-        <tr><td class="fn">SCORE</td><td>Computed in real time from μ₁₀₀ and σ₁₀₀. Used to rank and compare games. See below.</td></tr>
+        <tr><td class="fn">DAS / LS</td><td>&#10003; = Double After Split allowed. LS = Late Surrender available (saves roughly 0.08%). Both affect base edge and optimal strategy.</td></tr>
+        <tr><td class="fn">Pen%</td><td>Penetration &mdash; percentage of shoe dealt before shuffle. Higher penetration is better for the counter. The most impactful variable after deck count.</td></tr>
+        <tr><td class="fn">Spread</td><td>Bet spread from minimum to maximum units. A 1&ndash;8 spread means 1 unit at neutral counts up to 8 units at high counts. Wider spreads increase both &mu;&#x2081;&#x2080;&#x2080; and &sigma;&#x2081;&#x2080;&#x2080;.</td></tr>
+        <tr><td class="fn">Style</td><td>Play-All = every hand played regardless of count. Wong-In = back-counting; you sit down only when the true count reaches the threshold. Wonging substantially increases &mu;&#x2081;&#x2080;&#x2080; and &sigma;&#x2081;&#x2080;&#x2080;.</td></tr>
+        <tr><td class="fn">&mu;/100</td><td>Win rate per 100 hands in units, from BJA3 Chapter 10. Values under 0.5 are modest edges; over 1.0 represents a strong game.</td></tr>
+        <tr><td class="fn">&sigma;/100</td><td>Standard deviation per 100 hands in units. Wider spreads and wonging produce higher &sigma;&#x2081;&#x2080;&#x2080;. This drives all variance calculations throughout the app.</td></tr>
+        <tr><td class="fn">SCORE</td><td>Computed live from &mu;&#x2081;&#x2080;&#x2080; and &sigma;&#x2081;&#x2080;&#x2080;. Used to rank and compare games. See below.</td></tr>
       </tbody>
     </table>
   </div>
-
   <h3 id="libscore">SCORE Column</h3>
-  <p>
-    SCORE is computed live and updates when you change HPH in the shared bar. The
-    default sort is SCORE descending — best games first. Sorting by penetration or
-    spread lets you see clearly how those variables interact with game quality.
-  </p>
+  <p>SCORE is computed live and updates when you change HPH. Default sort is SCORE descending &mdash; best games first. Sorting by penetration or spread shows clearly how those variables drive game quality.</p>
 </section>
 
-<!-- TAB 4 -->
 <section class="section" id="tab4">
   <h2><span class="tab-pill">Tab 4</span> Bet Optimizer</h2>
-  <p>
-    Tab 4 computes the optimal bet to place at each true count level given a game
-    configuration and a spread constraint. It outputs μ₁₀₀, σ₁₀₀, SCORE, and
-    Desirability Index for that betting pattern, and propagates μ/σ to Tabs 1 and 2.
-  </p>
+  <p>Tab 4 computes the optimal bet at each true count level given a game configuration and spread constraint. It outputs &mu;&#x2081;&#x2080;&#x2080;, &sigma;&#x2081;&#x2080;&#x2080;, SCORE, and Desirability Index, then propagates &mu;/&sigma; to Tabs 1 and 2.</p>
 
   <h3 id="optinputs">Inputs</h3>
   <div class="tbl-wrap">
@@ -778,239 +294,166 @@ infinite series. The approximation is adequate for most practical inputs.</span>
       <thead><tr><th>Field</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td class="fn">Decks</td><td>Shoe size. Affects TC frequency distribution and base house edge.</td></tr>
-        <tr><td class="fn">S17 / H17</td><td>Dealer's soft 17 rule. H17 costs roughly 0.22% in edge.</td></tr>
+        <tr><td class="fn">S17 / H17</td><td>Dealer&rsquo;s soft 17 rule. H17 costs roughly 0.22% in edge.</td></tr>
         <tr><td class="fn">Double After Split</td><td>Whether doubling after splits is permitted. No-DAS costs roughly 0.14%.</td></tr>
         <tr><td class="fn">Late Surrender</td><td>Whether the player may surrender after seeing dealer upcard. Saves roughly 0.08%.</td></tr>
-        <tr><td class="fn">Penetration (%)</td><td>Cards dealt before shuffle as a percentage. The single most important optimizer input — deeper penetration means more high-count opportunities and higher SCORE.</td></tr>
+        <tr><td class="fn">Penetration (%)</td><td>Cards dealt before shuffle as a percentage. The single most important optimizer input &mdash; deeper penetration means more high-count opportunities and higher SCORE.</td></tr>
         <tr><td class="fn">Counting system</td><td>Hi-Lo, K-O, or UBZII. Determines the edge-per-true-count-point value. All three are Level 1 systems.</td></tr>
-        <tr><td class="fn">Spread minimum</td><td>Your minimum bet in units — the cover bet at neutral or negative counts.</td></tr>
+        <tr><td class="fn">Spread minimum</td><td>Your minimum bet in units &mdash; the cover bet at neutral or negative counts.</td></tr>
         <tr><td class="fn">Spread maximum</td><td>Your top bet in units at high count levels. Wider spread increases EV but also variance and scrutiny.</td></tr>
-        <tr><td class="fn">Bet steps</td><td>Number of distinct bet sizes between minimum and maximum. More steps = smoother ramp, harder to execute. Typical: 3–5 steps.</td></tr>
-        <tr><td class="fn">Play style</td><td>Play-All or Wong-In. Wonging concentrates play at positive counts for much higher μ₁₀₀.</td></tr>
-        <tr><td class="fn">Wong-in at TC ≥</td><td>Minimum true count to enter the table when back-counting. Common values: TC+1 or TC+2.</td></tr>
+        <tr><td class="fn">Bet steps</td><td>Number of distinct bet sizes between minimum and maximum. More steps = smoother ramp, harder to execute. Typical: 3&ndash;5 steps.</td></tr>
+        <tr><td class="fn">Play style</td><td>Play-All or Wong-In. Wonging concentrates play at positive counts for much higher &mu;&#x2081;&#x2080;&#x2080;.</td></tr>
+        <tr><td class="fn">Wong-in at TC &ge;</td><td>Minimum true count to enter the table when back-counting. Common values: TC+1 or TC+2.</td></tr>
       </tbody>
     </table>
   </div>
 
   <h3 id="scoredi">SCORE and Desirability Index</h3>
-  <p>
-    SCORE is Don Schlesinger's dimensionless game quality metric. It allows
-    apples-to-apples comparison of any two games independent of unit size:
-  </p>
-  <div class="formula">SCORE = μ₁₀₀² / σ₁₀₀² × 100
-```
-
-<span class="c">Typical ranges:
-0.05–0.15   poor game (8D, low pen, tight spread)
-0.15–0.35   average 6D game
-0.35–0.60   good 6D or average 2D game
-0.60–1.00   excellent game (2D high pen, or wonging)
->1.00        outstanding (1D or deep-pen 2D)</span></div>
-<p class="src">Source: BJA3 Chapter 10. SCORE is equivalent to the Sharpe ratio in finance.</p>
-
-```
-  <p>
-    SCORE does not account for table speed. Two identical-SCORE games at different
-    HPH produce different dollar rates. The Desirability Index (DI) corrects for this:
-  </p>
-  <div class="formula">DI = SCORE × HPH / 100
-```
-
-<span class="c">A mediocre-SCORE game at 200 HPH (heads-up) can produce more dollars
-per hour than a high-SCORE game at 60 HPH (full table).</span></div>
-<p class="src">Source: BJA3 Chapter 10.</p>
-
-```
-  <h3 id="kelly">Kelly Criterion and Bet Sizing</h3>
-  <p>
-    The optimizer assigns bets using a Kelly-fraction approach, constrained to the
-    [spread min, spread max] range and snapped to the nearest defined bet level.
-  </p>
-  <div class="formula">b_Kelly(TC)  = edge(TC) / σ²_per_unit × bankroll_units
-```
-
-edge(TC)     = base_edge + TC × edge_per_TC_point
-
-<span class="c">Edge-per-TC values by counting system:
-Hi-Lo:  ≈ 0.50% per TC point   (BJA3 Chapter 4)
-K-O:    ≈ 0.48% per TC point   (Vancura & Fuchs)
-UBZII:  ≈ 0.45% per TC point   (Uston)</span></div>
-<p class="src">Source: Kelly (1956); BJA3 Chapter 4 for edge-per-TC values.</p>
-
-```
-  <div class="callout warn">
-    <strong>TC frequency approximation:</strong> The optimizer uses a Gaussian model
-    for the true count distribution. Actual TC frequencies are slightly non-Gaussian
-    due to discrete card removal. For production-quality results, replace with
-    pre-computed TC frequency tables from Griffin's <em>Theory of Blackjack</em> or
-    CVCX simulation data. See <code>VALIDATION_CVCX.md</code> in the repository.
+  <div class="formula">
+    SCORE = &mu;&#x2081;&#x2080;&#x2080;&sup2; / &sigma;&#x2081;&#x2080;&#x2080;&sup2; &times; 100<br>
+    <br>
+    <span class="c">Typical ranges:<br>
+    &nbsp;&nbsp;0.05&ndash;0.15 &nbsp;poor game (8D, low pen, tight spread)<br>
+    &nbsp;&nbsp;0.15&ndash;0.35 &nbsp;average 6D game<br>
+    &nbsp;&nbsp;0.35&ndash;0.60 &nbsp;good 6D or average 2D game<br>
+    &nbsp;&nbsp;0.60&ndash;1.00 &nbsp;excellent game (2D high pen, or wonging)<br>
+    &nbsp;&nbsp;&gt;1.00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;outstanding (1D or deep-pen 2D)</span>
   </div>
+  <p class="src">Source: BJA3 Chapter 10. SCORE is equivalent to the Sharpe ratio in finance.</p>
+  <div class="formula">
+    DI = SCORE &times; HPH / 100<br>
+    <br>
+    <span class="c">A mediocre-SCORE game at 200 HPH (heads-up) can produce more dollars<br>
+    per hour than a high-SCORE game at 60 HPH (full table).</span>
+  </div>
+  <p class="src">Source: BJA3 Chapter 10.</p>
+
+  <h3 id="kelly">Kelly Criterion and Bet Sizing</h3>
+  <div class="formula">
+    b_Kelly(TC) = edge(TC) / &sigma;&sup2;_per_unit &times; bankroll_units<br>
+    <br>
+    edge(TC) = base_edge + TC &times; edge_per_TC_point<br>
+    <br>
+    <span class="c">Edge-per-TC values by counting system:<br>
+    &nbsp;&nbsp;Hi-Lo: &asymp; 0.50% per TC point &nbsp;(BJA3 Chapter 4)<br>
+    &nbsp;&nbsp;K-O: &nbsp;&asymp; 0.48% per TC point &nbsp;(Vancura &amp; Fuchs)<br>
+    &nbsp;&nbsp;UBZII: &asymp; 0.45% per TC point &nbsp;(Uston)</span>
+  </div>
+  <p class="src">Source: Kelly (1956); BJA3 Chapter 4 for edge-per-TC values.</p>
+  <div class="callout warn"><strong>TC frequency approximation:</strong> The optimizer uses a Gaussian model for the true count distribution. For production-quality results, replace with pre-computed TC frequency tables from Griffin&rsquo;s <em>Theory of Blackjack</em> or CVCX simulation data. See <code>VALIDATION_CVCX.md</code> in the repository.</div>
 
   <h3 id="ramp">Bet Ramp Table</h3>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>Column</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td class="fn">TC</td><td>True count bucket. "≤-4" and "≥+6" are grouped extremes. True count ≈ running count ÷ decks remaining.</td></tr>
+        <tr><td class="fn">TC</td><td>True count bucket. &ldquo;&le;&minus;4&rdquo; and &ldquo;&ge;+6&rdquo; are grouped extremes. True count &asymp; running count &divide; decks remaining.</td></tr>
         <tr><td class="fn">Freq%</td><td>Probability of being at this TC, normalised across hands you actually play. Sums to 100% for Play-All; only positive buckets appear for Wong-In.</td></tr>
-        <tr><td class="fn">Edge%</td><td>Player's edge at this true count. Green = player advantage; red = house advantage. Counters typically play more hands at a disadvantage than an advantage, but win because the big bets are placed at positive counts.</td></tr>
+        <tr><td class="fn">Edge%</td><td>Player&rsquo;s edge at this true count. Green = player advantage; red = house advantage.</td></tr>
         <tr><td class="fn">Bet (units)</td><td>Recommended bet at this TC in units. The ramp is always non-decreasing.</td></tr>
-        <tr><td class="fn">Bet ($)</td><td>Recommended bet in dollars (units × unit size).</td></tr>
-        <tr><td class="fn">EV/100h</td><td>Expected value contribution from this TC bucket per 100 hands. The sum across all rows equals the overall EV from which μ₁₀₀ is derived.</td></tr>
+        <tr><td class="fn">Bet ($)</td><td>Recommended bet in dollars (units &times; unit size).</td></tr>
+        <tr><td class="fn">EV/100h</td><td>Expected value contribution from this TC bucket per 100 hands. Sum across all rows = overall EV from which &mu;&#x2081;&#x2080;&#x2080; is derived.</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- TAB 5 -->
 <section class="section" id="tab5">
   <h2><span class="tab-pill">Tab 5</span> Settings</h2>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>Setting</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td class="fn">Decimal places</td><td>Controls decimal places in unit-valued outputs (RoR, SCORE, μ, σ). Does not affect percentage or dollar outputs. Default: 4.</td></tr>
+        <tr><td class="fn">Decimal places</td><td>Controls decimal places in unit-valued outputs (RoR, SCORE, &mu;, &sigma;). Does not affect percentage or dollar outputs. Default: 4.</td></tr>
         <tr><td class="fn">Status bar help</td><td>When checked, the footer bar displays contextual help as you hover over or focus on any input. Uncheck when you no longer need it. Default: on.</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- GLOSSARY -->
 <section class="section" id="glossary">
   <h2>Glossary</h2>
 
   <div class="glossary-item">
-    <div class="gterm">μ₁₀₀ — Win Rate per 100 Hands</div>
+    <div class="gterm">&mu;&#x2081;&#x2080;&#x2080; &mdash; Win Rate per 100 Hands</div>
     <div class="gsym">Units: betting units. Also written mu100.</div>
-    <p>Mean profit per 100 hands played, in units. The fundamental measure of a counter's edge in a given game and betting configuration. Derived from BJA3 Chapter 10 simulation data or custom simulator output.</p>
+    <p>Mean profit per 100 hands played, in units. The fundamental measure of a counter&rsquo;s edge in a given game and betting configuration.</p>
   </div>
-
   <div class="glossary-item">
-    <div class="gterm">σ₁₀₀ — Standard Deviation per 100 Hands</div>
+    <div class="gterm">&sigma;&#x2081;&#x2080;&#x2080; &mdash; Standard Deviation per 100 Hands</div>
     <div class="gsym">Units: betting units. Also written sigma100.</div>
-    <p>Standard deviation of results per 100 hands in units. Captures the volatility inherent to blackjack — doubling, splitting, and varying bets all increase σ relative to flat-bet play. Typical range: 10–13 for flat betting; 13–20 for spread betting.</p>
+    <p>Standard deviation of results per 100 hands in units. Typical range: 10&ndash;13 for flat betting; 13&ndash;20 for spread betting.</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">Risk of Ruin (RoR)</div>
-    <div class="gsym">Also: probability of ruin, Gambler's Ruin probability.</div>
-    <p>The probability that cumulative results will eventually reach −B (lose the entire bankroll). For a player with positive edge (μ > 0), this is less than 1.0 — but it is never zero. BJA3 p.112.</p>
+    <div class="gsym">Also: probability of ruin, Gambler&rsquo;s Ruin probability.</div>
+    <p>The probability that cumulative results will eventually reach &minus;B (lose the entire bankroll). For a player with positive edge (&mu; &gt; 0), this is less than 1.0 &mdash; but it is never zero. BJA3 p.112.</p>
   </div>
-
   <div class="glossary-item">
-    <div class="gterm">N₀ (N-naught)</div>
+    <div class="gterm">N&#x2080; (N-naught)</div>
     <div class="gsym">Units: hands. Divide by HPH to convert to hours.</div>
-    <p>The number of hands at which cumulative EV equals one SD of cumulative results. Before N₀, luck dominates; after N₀, skill becomes statistically significant. A key measure of how quickly a game's edge "pays off" relative to its variance. BJA3 Chapter 10.</p>
+    <p>The number of hands at which cumulative EV equals one SD of cumulative results. Before N&#x2080;, luck dominates; after N&#x2080;, skill becomes statistically significant. BJA3 Chapter 10.</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">SCORE</div>
     <div class="gsym">Dimensionless. Stands for Standardised Comparison Of Risk and Edge.</div>
-    <p>Game quality metric: SCORE = (μ₁₀₀ / σ₁₀₀)² × 100. Analogous to the Sharpe ratio in finance. Allows comparison of games with different edges and volatilities on a single scale. Higher is always better. BJA3 Chapter 10.</p>
+    <p>Game quality metric: SCORE = (&mu;&#x2081;&#x2080;&#x2080; / &sigma;&#x2081;&#x2080;&#x2080;)&sup2; &times; 100. Analogous to the Sharpe ratio in finance. Higher is always better. BJA3 Chapter 10.</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">Desirability Index (DI)</div>
-    <div class="gsym">DI = SCORE × HPH / 100.</div>
-    <p>SCORE adjusted for table speed. Two games with the same SCORE but different HPH produce different dollar rates; DI captures this. A mediocre-SCORE game played heads-up at 200 HPH may be more profitable than a high-SCORE crowded game at 60 HPH. BJA3 Chapter 10.</p>
+    <div class="gsym">DI = SCORE &times; HPH / 100.</div>
+    <p>SCORE adjusted for table speed. A mediocre-SCORE game played heads-up at 200 HPH may produce more dollars per hour than a high-SCORE crowded game at 60 HPH. BJA3 Chapter 10.</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">True Count (TC)</div>
     <div class="gsym">Dimensionless integer.</div>
-    <p>Running count (sum of card count values seen) divided by decks remaining to be dealt. TC normalises the running count across different penetration levels. For Hi-Lo, each +1 TC point is worth approximately 0.50% in player edge (BJA3 Chapter 4).</p>
+    <p>Running count divided by decks remaining to be dealt. Normalises the running count across different penetration levels. For Hi-Lo, each +1 TC point is worth approximately 0.50% in player edge (BJA3 Chapter 4).</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">Penetration</div>
-    <div class="gsym">Expressed as % of shoe dealt, or as cards dealt of total.</div>
-    <p>Proportion of the shoe dealt before reshuffling. Higher penetration = more cards seen = more TC variance = more high-count opportunities. The single most important game condition after deck count. Counters should prioritise games with 75%+ penetration.</p>
+    <div class="gsym">Expressed as % of shoe dealt.</div>
+    <p>Proportion of the shoe dealt before reshuffling. Higher penetration = more cards seen = more TC variance = more high-count opportunities. The single most important game condition after deck count.</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">Wong-In / Back-Counting</div>
     <div class="gsym">Named for Stanford Wong, Professional Blackjack.</div>
-    <p>A strategy where the counter watches a table without betting until the count reaches a positive threshold (the Wong-in TC), then sits down. This concentrates all play at positive-EV situations, dramatically increasing μ₁₀₀ at the cost of higher σ₁₀₀ and reduced HPH. Some casinos prohibit mid-shoe entry specifically to counter this.</p>
+    <p>A strategy where the counter watches a table without betting until the count reaches a positive threshold, then sits down. Dramatically increases &mu;&#x2081;&#x2080;&#x2080; at the cost of higher &sigma;&#x2081;&#x2080;&#x2080; and reduced HPH. Some casinos prohibit mid-shoe entry to counter this.</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">Kelly Criterion</div>
     <div class="gsym">Source: Kelly (1956), Bell System Technical Journal.</div>
-    <p>The formula for the fraction of bankroll to bet that maximises long-run bankroll growth. Full Kelly bet = edge ÷ variance per unit, which produces 13.5% RoR. Half Kelly (bet = edge ÷ (2 × variance)) produces roughly 1.7% RoR and is commonly used by professional players.</p>
+    <p>The formula for the fraction of bankroll to bet that maximises long-run bankroll growth. Full Kelly = edge &divide; variance per unit, producing 13.5% RoR. Half Kelly produces roughly 1.7% RoR and is commonly used by professional players.</p>
   </div>
-
   <div class="glossary-item">
     <div class="gterm">Hi-Lo Count</div>
     <div class="gsym">Balanced Level 1 counting system.</div>
-    <p>The most widely used card counting system. Cards 2–6: +1. Cards 7–9: 0. Cards 10–A: −1. Running count ÷ decks remaining = true count. Hi-Lo is the reference system for all BJA3 Chapter 10 simulations and for CVCX's pre-run data.</p>
+    <p>The most widely used card counting system. Cards 2&ndash;6: +1. Cards 7&ndash;9: 0. Cards 10&ndash;A: &minus;1. Running count &divide; decks remaining = true count. Hi-Lo is the reference system for all BJA3 Chapter 10 simulations.</p>
   </div>
-
   <div class="glossary-item">
-    <div class="gterm">Standard Normal CDF Φ(z)</div>
+    <div class="gterm">Standard Normal CDF &Phi;(z)</div>
     <div class="gsym">Implemented via Abramowitz &amp; Stegun formula 26.2.17.</div>
-    <p>The cumulative distribution function of the standard normal distribution. Φ(z) = probability that a standard normal variable is ≤ z. Used for result range, rarity, and trip RoR calculations. Implemented without external libraries using A&amp;S (1964); maximum absolute error 7.5 × 10⁻⁸.</p>
+    <p>&Phi;(z) = probability that a standard normal variable is &le; z. Used for result range, rarity, and trip RoR calculations. Maximum absolute error 7.5 &times; 10&sup8;.</p>
   </div>
 </section>
 
-<!-- BIBLIOGRAPHY -->
 <section class="section" id="biblio">
   <h2>Bibliography</h2>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>Ref</th><th>Citation</th><th>Used for</th></tr></thead>
       <tbody>
-        <tr>
-          <td class="fn">BJA3</td>
-          <td>Don Schlesinger, <em>Blackjack Attack: Playing the Pros' Way</em>, 3rd ed., RGE Publishing, 2004.</td>
-          <td>All core risk formulas (RoR, N₀, SCORE, DI, trip RoR, goal probabilities). Game library data. Edge-per-TC values.</td>
-        </tr>
-        <tr>
-          <td class="fn">ToB</td>
-          <td>Peter Griffin, <em>The Theory of Blackjack</em>, 6th ed., Huntington Press, 1999.</td>
-          <td>TC frequency distribution theory. Mathematical foundations of card counting advantage.</td>
-        </tr>
-        <tr>
-          <td class="fn">A&amp;S</td>
-          <td>Abramowitz, M. and Stegun, I.A. (eds.), <em>Handbook of Mathematical Functions</em>, National Bureau of Standards, 1964. Formula 26.2.17.</td>
-          <td>Standard normal CDF implementation. Max error 7.5 × 10⁻⁸.</td>
-        </tr>
-        <tr>
-          <td class="fn">Acklam</td>
-          <td>Acklam, Peter J., <em>An algorithm for computing the inverse normal cumulative distribution function</em>, 2000.</td>
-          <td>Inverse normal CDF (Φ⁻¹). Max error approximately 3 × 10⁻⁹.</td>
-        </tr>
-        <tr>
-          <td class="fn">Kelly</td>
-          <td>Kelly, J.L., <em>A New Interpretation of Information Rate</em>, Bell System Technical Journal, Vol. 35, July 1956, pp. 917–926.</td>
-          <td>Kelly Criterion for optimal bet sizing.</td>
-        </tr>
-        <tr>
-          <td class="fn">VF98</td>
-          <td>Vancura, O. and Fuchs, K., <em>Knock-Out Blackjack</em>, Huntington Press, 1998.</td>
-          <td>K-O counting system edge-per-count-point values.</td>
-        </tr>
-        <tr>
-          <td class="fn">Uston</td>
-          <td>Uston, Ken, <em>Million Dollar Blackjack</em>, Gambling Times, 1981.</td>
-          <td>Uston Balanced Zone II (UBZII) counting system parameters.</td>
-        </tr>
-        <tr>
-          <td class="fn">BJRM</td>
-          <td>Auston, John M., <em>Blackjack Risk Manager</em>, 1998–2002. Windows software, now unavailable. Archived description at <a href="https://www.blackjackreview.com/wp/catalog/blackjack-risk-manager/">blackjackreview.com</a>.</td>
-          <td>Original inspiration and functional specification. BJRM established the four-tab calculator structure and the interactive status bar help pattern that BJW-RiskLab replicates and extends.</td>
-        </tr>
+        <tr><td class="fn">BJA3</td><td>Don Schlesinger, <em>Blackjack Attack: Playing the Pros&rsquo; Way</em>, 3rd ed., RGE Publishing, 2004.</td><td>All core risk formulas, game library data, edge-per-TC values.</td></tr>
+        <tr><td class="fn">ToB</td><td>Peter Griffin, <em>The Theory of Blackjack</em>, 6th ed., Huntington Press, 1999.</td><td>TC frequency distribution theory.</td></tr>
+        <tr><td class="fn">A&amp;S</td><td>Abramowitz, M. and Stegun, I.A. (eds.), <em>Handbook of Mathematical Functions</em>, NBS, 1964. Formula 26.2.17.</td><td>Standard normal CDF. Max error 7.5 &times; 10&sup8;.</td></tr>
+        <tr><td class="fn">Acklam</td><td>Acklam, Peter J., <em>An algorithm for computing the inverse normal cumulative distribution function</em>, 2000.</td><td>Inverse normal CDF (&Phi;&sup1;). Max error &asymp; 3 &times; 10&sup9;.</td></tr>
+        <tr><td class="fn">Kelly</td><td>Kelly, J.L., <em>A New Interpretation of Information Rate</em>, Bell System Technical Journal, Vol. 35, July 1956.</td><td>Kelly Criterion for optimal bet sizing.</td></tr>
+        <tr><td class="fn">VF98</td><td>Vancura, O. and Fuchs, K., <em>Knock-Out Blackjack</em>, Huntington Press, 1998.</td><td>K-O system edge-per-count-point values.</td></tr>
+        <tr><td class="fn">Uston</td><td>Uston, Ken, <em>Million Dollar Blackjack</em>, Gambling Times, 1981.</td><td>UBZII counting system parameters.</td></tr>
+        <tr><td class="fn">BJRM</td><td>Auston, John M., <em>Blackjack Risk Manager</em>, 1998&ndash;2002. Archived at <a href="https://www.blackjackreview.com/wp/catalog/blackjack-risk-manager/">blackjackreview.com</a>.</td><td>Original inspiration and functional specification for BJW-RiskLab.</td></tr>
       </tbody>
     </table>
   </div>
-
-  <div class="callout info" style="margin-top:24px">
-    <strong>Validation:</strong> All formula implementations are validated against
-    <a href="https://www.qfit.com/cvcxonline.htm">CVCX Online</a> (Norman Wattenberger),
-    the definitive reference implementation of BJA3 formulas. The full test suite is in
-    <code>VALIDATION_CVCX.md</code> at the repository root. No formula is considered
-    production-ready until it passes all 60+ test cases in that document.
-  </div>
+  <div class="callout info" style="margin-top:24px"><strong>Validation:</strong> All formula implementations are validated against <a href="https://www.qfit.com/cvcxonline.htm">CVCX Online</a> (Norman Wattenberger). The full test suite is in <code>VALIDATION_CVCX.md</code> at the repository root.</div>
 </section>
 ```
 
@@ -1019,13 +462,12 @@ UBZII:  ≈ 0.45% per TC point   (Uston)</span></div>
 
 <script>
 (function(){
-  const links = document.querySelectorAll('.toc a');
-  const targets = Array.from(document.querySelectorAll('[id]'));
+  var links = document.querySelectorAll('.toc a');
+  var targets = Array.from(document.querySelectorAll('[id]'));
   function update(){
-    let cur = '';
-    const top = window.scrollY + 90;
-    for(const t of targets){ if(t.offsetTop <= top) cur = t.id; }
-    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + cur));
+    var cur = '', top = window.scrollY + 90;
+    for(var i=0;i<targets.length;i++){ if(targets[i].offsetTop <= top) cur = targets[i].id; }
+    for(var j=0;j<links.length;j++){ links[j].classList.toggle('active', links[j].getAttribute('href') === '#'+cur); }
   }
   window.addEventListener('scroll', update, {passive:true});
   update();
