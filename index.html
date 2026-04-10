@@ -10,28 +10,24 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#07100a;--bg-s:#0d1a10;--bg-r:#131f15;--bg-i:#0a1b0d;
-  --brd:#1c3020;--brd-h:#27452b;
-  --acc:#00e58a;--acc-d:#00a863;--acc-g:rgba(0,229,138,.12);
-  --tx:#c8e8d0;--tx-d:#547a5e;--tx-m:#2b4530;--tx-l:#7aaa84;
-  --safe:#00e58a;--caut:#d4c038;--warn:#e09020;--dang:#ff5533;
+  --bg:#ffffff;--bg-s:#f4f4f4;--bg-r:#e8e8e8;--bg-i:#ffffff;
+  --brd:#cccccc;--brd-h:#aaaaaa;
+  --acc:#1a6b3c;--acc-d:#145530;--acc-g:rgba(26,107,60,.10);
+  --tx:#111111;--tx-d:#444444;--tx-m:#888888;--tx-l:#555555;
+  --safe:#1a6b3c;--caut:#7a6400;--warn:#b05000;--dang:#cc2200;
   --fmono:'JetBrains Mono','Courier New',monospace;
   --fui:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
   --r:4px;--rl:8px;--tr:.15s ease;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px}
-body{background:var(--bg);color:var(--tx);font-family:var(--fui);font-size:13px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column;background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,138,.013) 2px,rgba(0,229,138,.013) 4px)}
-.app-header{display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--brd);background:var(--bg-s);position:sticky;top:0;z-index:100;overflow:hidden}
-.app-logo{font-family:var(--fmono);font-weight:600;font-size:15px;color:var(--acc);letter-spacing:.08em;text-transform:uppercase}
+body{background:var(--bg);color:var(--tx);font-family:var(--fui);font-size:13px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+.app-header{display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:2px solid var(--tx);background:var(--bg-s);position:sticky;top:0;z-index:100;overflow:hidden}
+.app-logo{font-family:var(--fmono);font-weight:600;font-size:15px;color:var(--tx);letter-spacing:.08em;text-transform:uppercase}
 .app-logo span{color:var(--tx-d);font-weight:300}
 .hdr-meta{margin-left:auto;font-size:11px;color:var(--tx-m);font-family:var(--fmono)}
 .hdr-meta a{color:var(--tx-d);text-decoration:none;transition:color .15s}
 .hdr-meta a:hover{color:var(--acc)}
-.hdr-meta a{color:var(--tx-d);text-decoration:none}
-.hdr-meta a:hover{color:var(--acc)}
-.app-header::after{content:'';position:absolute;bottom:0;left:0;height:1px;width:40%;background:linear-gradient(to right,var(--acc),transparent);animation:scan 6s linear infinite}
-@keyframes scan{0%{transform:translateX(-100%);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateX(350%);opacity:0}}
 .shared-bar{display:flex;gap:20px;align-items:flex-end;padding:12px 24px;background:var(--bg-s);border-bottom:1px solid var(--brd);flex-wrap:wrap}
 .shared-bar .fg{display:flex;flex-direction:column;gap:4px;min-width:130px}
 .tab-bar{display:flex;padding:0 24px;background:var(--bg-s);border-bottom:1px solid var(--brd);gap:2px;overflow-x:auto}
@@ -53,7 +49,7 @@ label{font-size:11px;color:var(--tx-l);letter-spacing:.03em}
 input[type=number],input[type=text],select{background:var(--bg-i);border:1px solid var(--brd);border-radius:var(--r);color:var(--tx);font-family:var(--fmono);font-size:13px;padding:7px 10px;width:100%;transition:border-color var(--tr),box-shadow var(--tr);outline:none;-moz-appearance:textfield}
 input[type=number]:focus,input[type=text]:focus,select:focus{border-color:var(--acc-d);box-shadow:0 0 0 2px var(--acc-g)}
 input[type=number]:hover,select:hover{border-color:var(--brd-h)}
-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23547a5e'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
 .og{display:flex;flex-direction:column;gap:8px}
 .or{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 10px;background:var(--bg-r);border-radius:var(--r);border:1px solid var(--brd);cursor:default}
 .or:hover{border-color:var(--brd-h)}
@@ -62,7 +58,7 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .vs{color:var(--safe)}.vc{color:var(--caut)}.vw{color:var(--warn)}.vd{color:var(--dang)}
 .sd{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-m);margin:16px 0 10px;display:flex;align-items:center;gap:8px}
 .sd::after{content:'';flex:1;height:1px;background:var(--brd)}
-.disc{background:rgba(28,48,32,.4);border:1px solid var(--brd);border-radius:var(--r);padding:8px 14px;font-size:11px;color:var(--tx-m);margin-bottom:16px;line-height:1.5}
+.disc{background:var(--bg-r);border:1px solid var(--brd);border-radius:var(--r);padding:8px 14px;font-size:11px;color:var(--tx-m);margin-bottom:16px;line-height:1.5}
 .lc{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end}
 .lc .fg{min-width:130px;margin-bottom:0}
 .ltw{overflow-x:auto;border:1px solid var(--brd);border-radius:var(--rl)}
@@ -71,11 +67,11 @@ thead tr{background:var(--bg-r)}
 th{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx-d);padding:9px 12px;text-align:left;border-bottom:1px solid var(--brd);white-space:nowrap;user-select:none}
 th[data-sort]{cursor:pointer}
 th[data-sort]:hover{color:var(--acc)}
-td{padding:8px 12px;border-bottom:1px solid rgba(28,48,32,.6);color:var(--tx);white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--brd);color:var(--tx);white-space:nowrap}
 tr:last-child td{border-bottom:none}
 tbody tr{cursor:pointer;transition:background var(--tr)}
 tbody tr:hover{background:var(--bg-r)}
-tbody tr.sel{background:rgba(0,229,138,.07);outline:1px solid var(--acc-d);outline-offset:-1px}
+tbody tr.sel{background:rgba(26,107,60,.08);outline:1px solid var(--acc-d);outline-offset:-1px}
 .nc{font-family:var(--fmono);text-align:right}
 .le{text-align:center;color:var(--tx-m);padding:32px;font-style:italic}
 .ln{margin-top:10px;font-size:11px;font-family:var(--fmono);color:var(--tx-m);min-height:18px}
@@ -95,7 +91,7 @@ tbody tr.sel{background:rgba(0,229,138,.07);outline:1px solid var(--acc-d);outli
 .cbr input{width:auto}
 .cbr label{color:var(--tx)}
 ::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-track{background:var(--bg-r)}
 ::-webkit-scrollbar-thumb{background:var(--brd-h);border-radius:3px}
 </style>
 </head>
@@ -457,13 +453,10 @@ function fH(n){return !isFinite(n)||n>1e9?'∞':Math.round(n).toLocaleString()+'
 function fHr(n){return !isFinite(n)||n>1e6?'∞':fmt(n,1)+' hrs';}
 function rCls(r){if(r<=.01)return'vs';if(r<=.05)return'vc';if(r<=.135)return'vw';return'vd';}
 function sCls(s){if(s>=.6)return'vs';if(s>=.3)return'vc';if(s>=.1)return'vw';return'vd';}
-// Text labels for color-coded outputs (accessibility: never rely on color alone)
 function rLabel(r){if(r<=.01)return'LOW';if(r<=.05)return'OK';if(r<=.135)return'HIGH';return'DANGER';}
 function sLabel(s){if(s>=.6)return'STRONG';if(s>=.3)return'GOOD';if(s>=.1)return'WEAK';return'POOR';}
 function goalLabel(p){return(isNaN(p)||!isFinite(p))?'':'  '+(p>=.5?'LIKELY':'UNLIKELY');}
-// Always show explicit + sign on positive dollar values
 function fDsign(n,d=2){if(n===null||isNaN(n)||!isFinite(n))return'—';const s=Math.abs(n).toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g,',');return(n<0?'−$':'+$')+s;}
-// innerHTML variant so we can include badge spans
 function soH(id,val,cls){const e=g(id);if(!e)return;e.className='ov '+(cls||'');e.innerHTML=val;}
 function g(id){return document.getElementById(id);}
 function so(id,val,cls){const e=g(id);if(!e)return;e.textContent=val;e.className='ov '+(cls||'');}
@@ -488,7 +481,6 @@ const HELP={
 };
 function setHelp(txt){if(!S.showHelp)return;const b=g('status-bar');if(b)b.textContent=txt||'';}
 
-// Tab switching
 function switchTab(id){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
@@ -498,7 +490,6 @@ function switchTab(id){
   if(id==='tab3')renderLib();
 }
 
-// Tab 1
 function cT1(){
   const{mu:mu,sig,u,hph,B,rtgt}=S;
   const ror=RM.rorI(mu,sig,B);
@@ -514,7 +505,6 @@ function cT1(){
   so('sd_hr_out',fD(RM.sdSess(sig,hph,u),0),'');
 }
 
-// Tab 2
 function cT2(){
   const{mu,sig,u,hph,hrs,sl,wg,conf,act}=S;
   const N=Math.round(hrs*hph);
@@ -541,7 +531,6 @@ function cT2(){
   soH('goal_wt_out',fP(gwt,2)+(isNaN(gwt)?'':'<span class="badge">'+(gwt>=.5?'LIKELY':'UNLIKELY')+'</span>'),gwt>=.5?'vs':'vw');
 }
 
-// Tab 3
 let lsort='score',lasc=false;
 function renderLib(){
   const dec=g('lib_decks').value,s17=g('lib_s17').value,style=g('lib_style').value,spr=g('lib_spread').value;
@@ -569,7 +558,6 @@ function renderLib(){
   });
 }
 
-// Tab 4
 function cT4(){
   const r=runOpt({decks:S.d4,s17:S.s17,das:S.das,ls:S.ls,pen:S.pen,smin:S.smin,smax:S.smax,steps:S.steps,sys:S.sys,style:S.style,wong:S.wong,br:S.B,hph:S.hph,u:S.u});
   so('opt_mu_out',fmt(r.mu100,4),'');so('opt_sigma_out',fmt(r.sigma100,4),'');
@@ -584,7 +572,6 @@ function cT4(){
     const tr2=document.createElement('tr');
     const tl=b.tc>=6?'\u2265+6':b.tc<=-4?'\u2264\u22124':(b.tc>=0?'+':'')+b.tc;
     const fp=tf>0?((b.freq/tf)*100).toFixed(1)+'%':'—';
-    // Edge always shows explicit +/- prefix — never rely on color alone
     const edgePct=(b.edge>=0?'+':'\u2212')+Math.abs(b.edge*100).toFixed(2)+'%';
     const evSign=(b.edge*b.bet>=0?'+':'\u2212');
     const evAbs=fD(Math.abs(b.edge*b.bet*S.u*100),0);
@@ -597,7 +584,6 @@ function cT4(){
   const n=g('opt_pn');if(n){n.textContent=`μ=${fmt(r.mu100,4)} and σ=${fmt(r.sigma100,4)} propagated to Tabs 1 & 2.`;n.classList.add('vis');}
 }
 
-// Input binding
 function bind(id,key,type,cb){
   const e=g(id);if(!e)return;
   e.addEventListener('input',()=>{
@@ -613,7 +599,6 @@ function bind(id,key,type,cb){
   if(h){e.addEventListener('focus',()=>setHelp(h));e.addEventListener('mouseenter',()=>setHelp(h));}
 }
 
-// Init
 function init(){
   bind('mu100','mu','f',()=>{cT1();cT2();});
   bind('sigma100','sig','f',()=>{cT1();cT2();});
@@ -660,4 +645,3 @@ document.addEventListener('DOMContentLoaded',init);
 
 </body>
 </html>
-
